@@ -1,0 +1,37 @@
+{
+  // Visit https://aka.ms/tsconfig to read more about this file
+  "compilerOptions": {
+    // === Project Structure ===
+    "rootDir": "./src", // Essential: Specify the root folder for your .ts files.
+    "outDir": "./dist", // Essential: Specify the output folder for the compiled .js files.
+
+    // === Modern Node.js (ESM) Settings ===
+    "module": "nodenext", // Use modern Node.js module resolution for ESM.
+    "target": "esnext", // Compile to the latest JavaScript version.
+    "moduleDetection": "force", // Ensures files are treated as modules.
+
+    // === Type Definitions ===
+    // "types": [], // <-- REMOVE or COMMENT OUT this line.
+    // By removing it, TypeScript will automatically include all types from your @types/* dependencies (like @types/node and @types/express).
+    // If you keep it as an empty array, TS won't see those types.
+
+    // === Emitter Options ===
+    "sourceMap": true, // Generate .map files for debugging.
+    "declaration": true, // Generate .d.ts files for type definitions.
+    "declarationMap": true, // Create sourcemaps for .d.ts files.
+
+    // === Stricter Typechecking (Great choices!) ===
+    "strict": true, // Enable all strict type-checking options.
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+
+    // === Interoperability ===
+    "verbatimModuleSyntax": true, // More precise and consistent module emit.
+    "isolatedModules": true, // Ensures each file can be transpired without depending on others.
+    "esModuleInterop": true, // Recommended for compatibility between CJS and ESM.
+    "forceConsistentCasingInFileNames": true, // Recommended for consistency.
+    "skipLibCheck": true // Skip type checking of declaration files.
+  },
+  "include": ["src/**/*"], // Tell TypeScript to only compile files in the 'src' directory.
+  "exclude": ["node_modules"]
+}
