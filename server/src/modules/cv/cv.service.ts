@@ -1,7 +1,7 @@
-import cloudinary from "../config/cloudinary.js";
-import { prisma } from "../db/prisma.js";
+import cloudinary from "../../config/cloudinary.js";
+import { prisma } from "../../db/prisma.js";
 import type { UploadApiResponse } from "cloudinary";
-import type { JWTPayload } from "../utils/jwt.js";
+import type { JWTPayload } from "../../utils/jwt.js";
 
 class CVService {
   async handleUploadAndSave(
