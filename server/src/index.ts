@@ -2,12 +2,10 @@
 import express from "express";
 import type { Application, Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
-
-// For env File - needs to be configured at the top
 dotenv.config();
 
 const app: Application = express();
-const port = process.env.PORT || 8000;
+const port = process.env.PORT 
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
