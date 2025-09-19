@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken"
 import { env } from "../config/env.js";
 
 export type JWTPayload = { id: string; username: string; email: string };
