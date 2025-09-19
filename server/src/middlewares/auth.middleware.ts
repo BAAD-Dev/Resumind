@@ -37,3 +37,22 @@ export const protect = (req: Request, res: Response, next: NextFunction) => {
     next(error);
   }
 };
+
+export const identifyUser = (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const authHeader = req.headers.authorization;
+
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      const token = authHeader.split(" ")[1];
+      if (token) {
+        const payload = readPayload(token);
+        req.user = payload; // Attach user payload if token is valid
+      }
+    }
+  } catch (error) {
+    // If the token is present but invalid (expired, etc.), we ignore it
+    // and treat the user as a guest. We don't throw an error here.
+  }
+
+  next();
+};
