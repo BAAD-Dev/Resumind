@@ -21,4 +21,18 @@ model User {
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  cvs       CV[]
+}
+
+model CV {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  originalName String
+  cloudinaryId String   @unique // public_id from cloudinary
+  fileUrl      String   @unique
+  fileSize     Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  owner   User   @relation(fields: [ownerId], references: [id])
+  ownerId String @db.ObjectId
 }

@@ -4,21 +4,21 @@ import CVService from "./cv.service.js";
 class CVController {
   async uploadCV(req: Request, res: Response, next: NextFunction) {
     try {
-      // Multer attaches the file to req.file.
-      // We also know req.user exists because the 'protect' middleware ran.
       const file = req.file;
-      const user = req.user!; // The '!' asserts that user is not undefined
+      const user = req.user!; 
 
       if (!file) {
         throw new Error("No file uploaded.", { cause: { status: 400 } });
       }
 
-      const result = await CVService.uploadCV(file, user);
+      // Call the service to upload the file
+      const uploadResult = await CVService.uploadCV(file, user);
 
+      // Return a success message with the viewable URL and original filename
       res.status(201).json({
         message: "CV uploaded successfully.",
-        url: result.secure_url,
-        cloudinaryId: result.public_id,
+        url: uploadResult.secure_url,
+        originalname: file.originalname,
       });
     } catch (err) {
       next(err);
@@ -27,3 +27,4 @@ class CVController {
 }
 
 export default new CVController();
+
