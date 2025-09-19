@@ -1,16 +1,16 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
 
 generator client {
   provider = "prisma-client-js"
 }
 
-datasource db {
-  provider = "mongodb"
-  url      = env("DATABASE_URL")
+// Enum to define the user roles for the paywall
+enum UserRole {
+  FREE
+  PAID
 }
 
 model User {
@@ -19,20 +19,74 @@ model User {
   username  String   @unique
   email     String   @unique
   password  String
+  role      UserRole @default(FREE)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  cvs       CV[]
+
+  // --- Relations ---
+  cvs             CV[]
+  jobDescriptions JobDescription[]
+  analyses        Analysis[]
 }
 
 model CV {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
   originalName String
-  cloudinaryId String   @unique // public_id from cloudinary
-  fileUrl      String   @unique
-  fileSize     Int
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  fileUrl      String    @unique
+  isGuest      Boolean   @default(false)
+  expiresAt    DateTime? // We'll use this field later for a cleanup job
 
-  owner   User   @relation(fields: [ownerId], references: [id])
-  ownerId String @db.ObjectId
+  // --- Relations ---
+  userId       String?   @db.ObjectId
+  user         User?     @relation(fields: [userId], references: [id])
+  analysis     Analysis?
+
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 }
+
+model JobDescription {
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  title          String
+  company        String
+  originalText   String
+  parsedKeywords String[]
+  isGuest        Boolean   @default(false)
+  expiresAt      DateTime?
+
+  // --- Relations ---
+  userId         String?   @db.ObjectId
+  user           User?     @relation(fields: [userId], references: [id])
+  analyses       Analysis[]
+
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+enum AnalysisType {
+  CV_ANALYSIS
+  JOB_MATCH_ANALYSIS
+}
+
+model Analysis {
+  id        String       @id @default(auto()) @map("_id") @db.ObjectId
+  type      AnalysisType
+  status    String
+  result    Json
+  isGuest   Boolean      @default(false)
+  expiresAt DateTime?
+
+  // --- Relations ---
+  userId    String?      @db.ObjectId
+  user      User?        @relation(fields: [userId], references: [id])
+
+  cvId      String       @unique @db.ObjectId
+  cv        CV           @relation(fields: [cvId], references: [id])
+
+  jobDescriptionId String?      @db.ObjectId
+  jobDescription   JobDescription? @relation(fields: [jobDescriptionId], references: [id])
+
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
+

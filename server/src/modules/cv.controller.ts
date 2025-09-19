@@ -5,21 +5,16 @@ class CVController {
   async uploadCV(req: Request, res: Response, next: NextFunction) {
     try {
       const file = req.file;
-      const user = req.user!; 
+      const user = req.user; // This is either the user payload or undefined
 
       if (!file) {
         throw new Error("No file uploaded.", { cause: { status: 400 } });
       }
 
-      // Call the service to upload the file
-      const uploadResult = await CVService.uploadCV(file, user);
+      // Call the service to handle both upload and DB save
+      const newCvRecord = await CVService.handleUploadAndSave(file, user);
 
-      // Return a success message with the viewable URL and original filename
-      res.status(201).json({
-        message: "CV uploaded successfully.",
-        url: uploadResult.secure_url,
-        originalname: file.originalname,
-      });
+      res.status(201).json(newCvRecord);
     } catch (err) {
       next(err);
     }
@@ -27,4 +22,3 @@ class CVController {
 }
 
 export default new CVController();
-
