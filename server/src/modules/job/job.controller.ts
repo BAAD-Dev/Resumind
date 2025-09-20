@@ -15,6 +15,16 @@ class JobController {
       next(err);
     }
   }
+
+  async getUserJobs(req: Request, res: Response, next: NextFunction) {
+    try {
+      const user = req.user!;
+      const jobs = await JobService.getJobsForUser(user.id);
+      res.status(200).json(jobs);
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 export default new JobController();
