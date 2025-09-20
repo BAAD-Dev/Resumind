@@ -47,21 +47,27 @@ model CV {
 }
 
 model JobDescription {
-  id             String    @id @default(auto()) @map("_id") @db.ObjectId
-  title          String
-  company        String
-  originalText   String
-  parsedKeywords String[]
-  isGuest        Boolean   @default(false)
-  expiresAt      DateTime?
+  id               String    @id @default(auto()) @map("_id") @db.ObjectId
+  title            String
+  company          String
+  location         String?   
+  employmentType   String?   
+  experienceLevel  String?   
+  summary          String?   
+  keySkills        String[]  
+  responsibilities String[]  
+  requirements     String[]  
+  originalText     String
+  isGuest          Boolean   @default(false)
+  expiresAt        DateTime?
 
   // --- Relations ---
-  userId         String?   @db.ObjectId
-  user           User?     @relation(fields: [userId], references: [id])
-  analyses       Analysis[]
+  userId           String?   @db.ObjectId
+  user             User?     @relation(fields: [userId], references: [id])
+  analyses         Analysis[]
 
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 }
 
 enum AnalysisType {
