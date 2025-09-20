@@ -67,6 +67,17 @@ The JSON object must have the following structure:
 }
 `;
 
+const GUEST_CV_ANALYSIS_PROMPT = `
+You are an expert ATS (Applicant Tracking System) analyzer.
+Analyze the provided CV document and return ONLY the overall score and a brief summary.
+Your response MUST be a valid JSON object. Do not include any text, markdown, or explanations outside of the JSON structure.
+The JSON object must have the following structure:
+{
+  "overallScore": <an integer between 0 and 100 representing the overall quality and ATS readiness of the CV>,
+  "summary": "<a 2-3 sentence professional summary of the candidate, highlighting their key strengths and experience level>"
+}
+`;
+
 class AnalysisService {
   async analyzeCvForUser(cvId: string, userId: string) {
     // Step A: Find the CV in our database, ensuring it belongs to the logged-in user.
@@ -108,6 +119,18 @@ class AnalysisService {
     });
 
     return newAnalysis;
+  }
+
+  async analyzeCvForGuest(file: Express.Multer.File) {
+    // This function takes the file buffer directly, analyzes it, and returns the result.
+    // It does NOT interact with the database.
+    const analysisJson = await GeminiService.analyzeFile(
+      file.buffer,
+      file.mimetype,
+      GUEST_CV_ANALYSIS_PROMPT
+    );
+
+    return analysisJson;
   }
 }
 
