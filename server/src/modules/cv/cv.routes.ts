@@ -12,4 +12,10 @@ cvRouter.post(
   CVController.uploadCV
 );
 
+cvRouter.get(
+  "/",
+  protect,
+  CVController.getUserCVs
+);
+
 export default cvRouter;

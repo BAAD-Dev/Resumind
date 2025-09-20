@@ -57,6 +57,18 @@ class CVService {
 
     return newCvRecord;
   }
+
+  async getCVsForUser(userId: string) {
+    const cvs = await prisma.cV.findMany({
+      where: {
+        userId: userId,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    return cvs;
+  }
 }
 
 export default new CVService();
