@@ -8,6 +8,7 @@ const required = [
   "CLOUDINARY_CLOUD_NAME",
   "CLOUDINARY_API_KEY",
   "CLOUDINARY_API_SECRET",
+  "GEMINI_API_KEY"
 ];
 for (const k of required) {
   if (!process.env[k]) throw new Error(`Missing env var: ${k}`);
@@ -21,4 +22,5 @@ export const env = {
     apiKey: process.env.CLOUDINARY_API_KEY!,
     apiSecret: process.env.CLOUDINARY_API_SECRET!,
   },
+  geminiApiKey: process.env.GEMINI_API_KEY!
 };
