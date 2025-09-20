@@ -16,13 +16,16 @@ export default function Price() {
       customerPhone: "081111030205",
     };
 
-    const response = await fetch("/api/checkout", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(dataCustomer),
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/payments/create`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataCustomer),
+      }
+    );
 
     const requestData = await response.json();
     console.log(requestData);
@@ -61,7 +64,8 @@ export default function Price() {
         </div>
         <Link
           href="/checkout"
-          className="mt-8 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition">
+          className="mt-8 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition"
+        >
           Checkout
         </Link>
       </div>
@@ -82,7 +86,8 @@ export default function Price() {
         </div>
         <Link
           href="/checkout"
-          className="mt-8 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition">
+          className="mt-8 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition"
+        >
           Checkout
         </Link>
       </div>
@@ -107,7 +112,8 @@ export default function Price() {
         </div>
         <button
           onClick={handleCheckout}
-          className="mt-8 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition">
+          className="mt-8 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition"
+        >
           Checkout
         </button>
       </div>
