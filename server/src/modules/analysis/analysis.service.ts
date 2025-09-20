@@ -134,7 +134,7 @@ class AnalysisService {
 
     const analysisJson = await GeminiService.analyzeFile(
       fileBuffer,
-      "application/pdf", // We'll assume PDF for now
+      "application/pdf",
       CV_ANALYSIS_PROMPT
     );
 
@@ -160,18 +160,26 @@ class AnalysisService {
 
     return analysisJson;
   }
+
   async analyzeJobMatch(cvId: string, jobId: string, userId: string) {
     // 1. THE PAYWALL: Check if the user is a PAID member
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user || user.role !== "PAID") {
-      throw new Error("Access denied. This is a premium feature for PAID users.", {
-        cause: { status: 402 }, // 402 Payment Required
-      });
+      throw new Error(
+        "Access denied. This is a premium feature for PAID users.",
+        {
+          cause: { status: 402 }, // 402 Payment Required
+        }
+      );
     }
 
     // 2. Fetch the CV and Job Description, ensuring they belong to the user
-    const cv = await prisma.cV.findUnique({ where: { id: cvId, userId: userId } });
-    const job = await prisma.jobDescription.findUnique({ where: { id: jobId, userId: userId } });
+    const cv = await prisma.cV.findUnique({
+      where: { id: cvId, userId: userId },
+    });
+    const job = await prisma.jobDescription.findUnique({
+      where: { id: jobId, userId: userId },
+    });
 
     if (!cv || !job) {
       throw new Error("CV or Job Description not found or access denied.", {
@@ -180,7 +188,9 @@ class AnalysisService {
     }
 
     // 3. Download the CV file content
-    const response = await axios.get(cv.fileUrl, { responseType: "arraybuffer" });
+    const response = await axios.get(cv.fileUrl, {
+      responseType: "arraybuffer",
+    });
     const cvBuffer = Buffer.from(response.data);
 
     // 4. Create a special prompt for Gemini that includes the job description text
@@ -195,7 +205,11 @@ class AnalysisService {
     `;
 
     // 5. Call our AI "engine" with the CV file and our special combined prompt
-    const analysisJson = await GeminiService.analyzeFile(cvBuffer, "application/pdf", promptForGemini);
+    const analysisJson = await GeminiService.analyzeFile(
+      cvBuffer,
+      "application/pdf",
+      promptForGemini
+    );
 
     // 6. Save the result as a new type of analysis
     const newAnalysis = await prisma.analysis.create({
@@ -205,12 +219,29 @@ class AnalysisService {
         result: analysisJson as any,
         userId: userId,
         cvId: cvId,
-        jobDescriptionId: jobId, 
+        jobDescriptionId: jobId,
       },
     });
 
     return newAnalysis;
   }
+
+  async getAnalysesForCV(cvId: string, userId: string) {
+    // This query is extra secure. It finds all analyses that match
+    // BOTH the cvId and the userId, preventing users from seeing other people's reports.
+    const analyses = await prisma.analysis.findMany({
+      where: {
+        cvId: cvId,
+        userId: userId,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    return analyses;
+  }
+
+  
 }
 
 export default new AnalysisService();
