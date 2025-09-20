@@ -18,4 +18,10 @@ analysisRouter.post(
   AnalysisController.analyzeGuestCv
 );
 
+analysisRouter.post(
+  "/match",
+  protect, // This is a secure endpoint
+  AnalysisController.analyzeJobMatch
+);
+
 export default analysisRouter;
