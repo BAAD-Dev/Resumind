@@ -73,6 +73,14 @@ class JobService {
 
     return newJob;
   }
+
+  async getJobsForUser(userId: string) {
+    const jobs = await prisma.jobDescription.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+    });
+    return jobs
+  }
 }
 
 export default new JobService();

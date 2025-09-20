@@ -52,6 +52,18 @@ class AnalysisController {
       next(err);
     }
   }
+
+  async getAnalysesForCV(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { cvId } = req.params;
+      if (!cvId) throw new Error("CV ID is required");
+      const user = req.user!;
+      const analyses = await AnalysisService.getAnalysesForCV(cvId, user.id);
+      res.status(200).json(analyses);
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 export default new AnalysisController();

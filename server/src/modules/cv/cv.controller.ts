@@ -19,6 +19,15 @@ class CVController {
       next(err);
     }
   }
+  async getUserCVs(req: Request, res: Response, next: NextFunction) {
+    try {
+      const user = req.user!;
+      const cvs = await CVService.getCVsForUser(user.id);
+      res.status(200).json(cvs);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default new CVController();
