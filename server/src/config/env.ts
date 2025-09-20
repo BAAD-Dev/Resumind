@@ -12,6 +12,7 @@ const required = [
   "MIDTRANS_CLIENT_KEY",
   "MIDTRANS_IS_PRODUCTION",
   "CORS_ORIGIN",
+  "GEMINI_API_KEY"
 ];
 for (const k of required) {
   if (!process.env[k]) throw new Error(`Missing env var: ${k}`);
@@ -38,4 +39,5 @@ export const env = {
     .split(",")
     .map((s) => s.trim())
     .filter(Boolean),
+  geminiApiKey: process.env.GEMINI_API_KEY!
 };
