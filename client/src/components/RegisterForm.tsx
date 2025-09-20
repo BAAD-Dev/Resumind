@@ -3,8 +3,10 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function RegisterForm() {
+  const router = useRouter();
   const [form, setForm] = useState({
     name: "",
     username: "",
@@ -16,10 +18,31 @@ export default function RegisterForm() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted:", form);
-    // TODO: connect ke API register
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/register`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(form),
+        }
+      );
+      console.log(response);
+
+      const data = await response.json();
+      console.log(data, "<< ini masuk datanya");
+
+      if (!response.ok) {
+        throw new Error(data.message || "Register failed");
+      }
+
+      router.push("/login");
+    } catch (error) {
+      console.log("Register error:", error);
+    }
   };
 
   return (
@@ -40,6 +63,7 @@ export default function RegisterForm() {
           width={150}
           height={150}
           className="mx-5 mt-6"
+          priority
         />
       </div>
 
@@ -55,6 +79,7 @@ export default function RegisterForm() {
         />
       </div>
 
+      {/* Form */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
         <div className="w-[28rem] bg-white rounded-4xl shadow-2xl p-10">
           <h1 className="text-4xl font-semibold mb-8 text-center">Sign Up</h1>
@@ -69,6 +94,7 @@ export default function RegisterForm() {
                 onChange={handleChange}
                 placeholder="Enter your name"
                 className="w-full mt-3 p-3 border rounded-md focus:ring-2 focus:ring-blue-500"
+                required
               />
             </div>
 
@@ -81,6 +107,7 @@ export default function RegisterForm() {
                 onChange={handleChange}
                 placeholder="Enter your username"
                 className="w-full mt-3 p-3 border rounded-md focus:ring-2 focus:ring-blue-500"
+                required
               />
             </div>
 
@@ -93,6 +120,7 @@ export default function RegisterForm() {
                 onChange={handleChange}
                 placeholder="Enter your email"
                 className="w-full mt-3 p-3 border rounded-md focus:ring-2 focus:ring-blue-500"
+                required
               />
             </div>
 
@@ -105,6 +133,7 @@ export default function RegisterForm() {
                 onChange={handleChange}
                 placeholder="Password"
                 className="w-full mt-3 p-3 border rounded-md focus:ring-2 focus:ring-blue-500"
+                required
               />
             </div>
 
@@ -116,7 +145,7 @@ export default function RegisterForm() {
           </form>
 
           <p className="text-sm text-gray-500 text-center mt-5">
-            Don't have an account?{" "}
+            Already have an account?{" "}
             <Link href="/login" className="text-blue-800 hover:underline">
               Sign in
             </Link>
