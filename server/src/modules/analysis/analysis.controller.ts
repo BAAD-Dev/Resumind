@@ -25,7 +25,29 @@ class AnalysisController {
       }
 
       const result = await AnalysisService.analyzeCvForGuest(file);
-      res.status(200).json(result); 
+      res.status(200).json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async analyzeJobMatch(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { cvId, jobId } = req.body;
+      const user = req.user!;
+
+      if (!cvId || !jobId) {
+        throw new Error("Both cvId and jobId are required.", {
+          cause: { status: 400 },
+        });
+      }
+
+      const result = await AnalysisService.analyzeJobMatch(
+        cvId,
+        jobId,
+        user.id
+      );
+      res.status(201).json(result);
     } catch (err) {
       next(err);
     }

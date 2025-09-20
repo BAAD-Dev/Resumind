@@ -1,5 +1,5 @@
 import { prisma } from "../../db/prisma.js";
-import GeminiService from "../../services/gemini.js"; // This is YOUR proven AI service
+import GeminiService from "../../services/gemini.js";
 import axios from "axios";
 
 const CV_ANALYSIS_PROMPT = `
@@ -78,9 +78,42 @@ The JSON object must have the following structure:
 }
 `;
 
+const JOB_MATCH_ANALYSIS_PROMPT = `
+You are an expert career strategist and senior technical recruiter. Your task is to perform a detailed comparative analysis of the provided CV against the provided Job Description.
+
+Your response MUST be a valid JSON object. Do not include any text, markdown, or explanations outside of the JSON structure. All string values in the final JSON object must be in professional English.
+
+The JSON object must have the following structure:
+
+{
+  "matchScore": <an integer between 0 and 100 representing how well the CV matches the job requirements>,
+  "matchSummary": "<a 2-3 sentence summary explaining the overall fit and highlighting the candidate's strongest qualifications for this specific role>",
+
+  "keywordAnalysis": {
+    "jobKeywords": [<an array of the top 10 most important keywords found in the Job Description>],
+    "matchedKeywords": [<an array of keywords that are present in BOTH the Job Description and the CV>],
+    "missingKeywords": [<an array of important keywords from the Job Description that are MISSING from the CV>]
+  },
+
+  "strengths": [
+    "<An array of strings, where each string is a bullet point explaining a specific strength or experience from the CV that directly aligns with a requirement in the Job Description>"
+  ],
+
+  "improvementAreas": [
+    "<An array of strings, where each string is a bullet point identifying a gap or a skill mentioned in the Job Description that is weak or absent in the CV>"
+  ],
+  
+  "suggestedEdits": [
+    {
+      "originalCVBullet": "<Copy one of the candidate's weaker experience bullet points from their CV>",
+      "suggestedRewrite": "<Rewrite that bullet point to better align with the language and requirements of the Job Description, making it more impactful for this specific application.>"
+    }
+  ]
+}
+`;
+
 class AnalysisService {
   async analyzeCvForUser(cvId: string, userId: string) {
-    // Step A: Find the CV in our database, ensuring it belongs to the logged-in user.
     const cv = await prisma.cV.findUnique({
       where: { id: cvId, userId: userId },
     });
@@ -94,20 +127,17 @@ class AnalysisService {
       );
     }
 
-    // Step B: Download the file from the Cloudinary URL into a buffer.
     const response = await axios.get(cv.fileUrl, {
       responseType: "arraybuffer",
     });
     const fileBuffer = Buffer.from(response.data);
 
-    // Step C: Call your proven GeminiService with the file and our specific prompt.
     const analysisJson = await GeminiService.analyzeFile(
       fileBuffer,
       "application/pdf", // We'll assume PDF for now
       CV_ANALYSIS_PROMPT
     );
 
-    // Step D: Save the structured result from Gemini into our Analysis collection.
     const newAnalysis = await prisma.analysis.create({
       data: {
         type: "CV_ANALYSIS",
@@ -122,8 +152,6 @@ class AnalysisService {
   }
 
   async analyzeCvForGuest(file: Express.Multer.File) {
-    // This function takes the file buffer directly, analyzes it, and returns the result.
-    // It does NOT interact with the database.
     const analysisJson = await GeminiService.analyzeFile(
       file.buffer,
       file.mimetype,
@@ -131,6 +159,57 @@ class AnalysisService {
     );
 
     return analysisJson;
+  }
+  async analyzeJobMatch(cvId: string, jobId: string, userId: string) {
+    // 1. THE PAYWALL: Check if the user is a PAID member
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user || user.role !== "PAID") {
+      throw new Error("Access denied. This is a premium feature for PAID users.", {
+        cause: { status: 402 }, // 402 Payment Required
+      });
+    }
+
+    // 2. Fetch the CV and Job Description, ensuring they belong to the user
+    const cv = await prisma.cV.findUnique({ where: { id: cvId, userId: userId } });
+    const job = await prisma.jobDescription.findUnique({ where: { id: jobId, userId: userId } });
+
+    if (!cv || !job) {
+      throw new Error("CV or Job Description not found or access denied.", {
+        cause: { status: 404 },
+      });
+    }
+
+    // 3. Download the CV file content
+    const response = await axios.get(cv.fileUrl, { responseType: "arraybuffer" });
+    const cvBuffer = Buffer.from(response.data);
+
+    // 4. Create a special prompt for Gemini that includes the job description text
+    const promptForGemini = `
+      Here is the Job Description text:
+      ---
+      ${job.originalText}
+      ---
+
+      Now, perform a detailed comparative analysis of the following CV against that Job Description, using these instructions:
+      ${JOB_MATCH_ANALYSIS_PROMPT}
+    `;
+
+    // 5. Call our AI "engine" with the CV file and our special combined prompt
+    const analysisJson = await GeminiService.analyzeFile(cvBuffer, "application/pdf", promptForGemini);
+
+    // 6. Save the result as a new type of analysis
+    const newAnalysis = await prisma.analysis.create({
+      data: {
+        type: "JOB_MATCH_ANALYSIS",
+        status: "COMPLETED",
+        result: analysisJson as any,
+        userId: userId,
+        cvId: cvId,
+        jobDescriptionId: jobId, 
+      },
+    });
+
+    return newAnalysis;
   }
 }
 
