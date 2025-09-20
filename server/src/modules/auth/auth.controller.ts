@@ -17,6 +17,13 @@ class AuthController {
     try {
       const validatedData = loginSchema.parse(req.body);
       const token = await AuthService.loginUser(validatedData);
+
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+      });
+
       res.json({ token });
     } catch (err) {
       next(err);

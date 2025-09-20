@@ -2,8 +2,47 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function LoginForm() {
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError(null);
+
+    const formData = new FormData(e.currentTarget);
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/login`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: formData.get("email"),
+            password: formData.get("password"),
+          }),
+          credentials: "include",
+        }
+      );
+
+      const data = await response.json();
+      console.log(data, "<< Login berhasil");
+
+      if (!response.ok) {
+        throw new Error(data.error || "Login failed");
+      }
+
+      router.push("/");
+      router.refresh();
+    } catch (error: any) {
+      setError(error.message || "Something went wrong");
+    }
+  };
+
   return (
     <div className="flex min-h-screen relative">
       {/* BG biru */}
@@ -41,7 +80,7 @@ export default function LoginForm() {
         <div className="w-[28rem] bg-white rounded-4xl shadow-2xl p-10">
           <h1 className="text-4xl font-semibold mb-8 text-center">Login</h1>
 
-          <form className="space-y-5">
+          <form className="space-y-5" onSubmit={handleSubmit}>
             <div>
               <label className="block text-sm font-base">Email</label>
               <input
@@ -49,6 +88,7 @@ export default function LoginForm() {
                 name="email"
                 placeholder="Enter your email"
                 className="w-full mt-3 p-3 border rounded-md focus:ring-2 focus:ring-blue-500"
+                required
               />
             </div>
 
@@ -59,8 +99,13 @@ export default function LoginForm() {
                 name="password"
                 placeholder="Password"
                 className="w-full mt-3 p-3 border rounded-md focus:ring-2 focus:ring-blue-500"
+                required
               />
             </div>
+
+            {error && (
+              <p className="text-red-600 text-sm font-medium mt-2">{error}</p>
+            )}
 
             <button
               type="submit"
@@ -70,7 +115,7 @@ export default function LoginForm() {
           </form>
 
           <p className="text-sm text-gray-500 text-center mt-5">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link href="/register" className="text-blue-800 hover:underline">
               Sign up
             </Link>
