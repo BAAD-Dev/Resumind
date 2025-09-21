@@ -1,3 +1,21 @@
+import Navbar from '../components/Navbar';
+import Stats from '../components/Stats';
+import Hero from '../components/Hero';
+import About from '@/components/About';
+import Pricing from '@/components/Price';
+import Footer from '@/components/Footer';
+import Reviews from '@/components/Review';
+
 export default function Home() {
-  return <h1>HomePage</h1>;
+  return (
+    <main className="bg-background min-h-screen">
+      <Navbar />
+      <Hero />
+      <Stats />
+      <About />
+      <Pricing />
+      <Reviews />
+      <Footer />
+    </main>
+  );
 }
