@@ -51,7 +51,6 @@ export default function Reviews() {
       <div className="mt-16 w-full overflow-hidden">
         <div className="flex animate-scroll group-hover:pause">
           {[...reviews, ...reviews].map((review, index) => (
-            // Kartu menggunakan 'bg-background' (putih)
             <div 
               key={index} 
               className="flex-shrink-0 w-80 sm:w-96 mx-4 p-8 rounded-2xl bg-background shadow-xl border border-transparent transition-all duration-300 hover:scale-105 hover:border-primary-light"
@@ -65,13 +64,10 @@ export default function Reviews() {
                 unoptimized={true} 
                 />
                 <div>
-                  {/* Nama menggunakan 'text-foreground' (hitam kebiruan) */}
                   <div className="text-lg font-semibold text-foreground">{review.name}</div>
-                  {/* Jabatan menggunakan 'text-primary-light' (biru aksen) */}
                   <div className="text-primary-light font-medium">{review.title}</div>
                 </div>
               </div>
-              {/* DIUBAH: Teks kutipan menggunakan abu-abu yang lebih gelap agar mudah dibaca */}
               <p className="mt-6 text-base leading-7 text-slate-700">“{review.quote}”</p>
               <div className="flex mt-4">
                 {[...Array(5)].map((_, i) => <StarIcon key={i} />)}
