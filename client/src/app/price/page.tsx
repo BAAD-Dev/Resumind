@@ -39,6 +39,7 @@ export default function Price() {
 
     if (requestData?.token) {
       window.snap.pay(requestData.token, {
+        // Disini Berarti penempatan webhook nya
         onSuccess: (result: any) => console.log("success", result),
         onPending: (result: any) => console.log("pending", result),
         onError: (result: any) => console.error("error", result),
