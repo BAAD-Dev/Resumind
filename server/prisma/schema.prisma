@@ -89,10 +89,10 @@ model Analysis {
   user      User?        @relation(fields: [userId], references: [id])
 
   cvId      String       @db.ObjectId
-  cv        CV           @relation(fields: [cvId], references: [id])
+  cv        CV           @relation(fields: [cvId], references: [id], onDelete: Cascade)
 
   jobDescriptionId String?      @db.ObjectId
-  jobDescription   JobDescription? @relation(fields: [jobDescriptionId], references: [id])
+  jobDescription   JobDescription? @relation(fields: [jobDescriptionId], references: [id], onDelete: Cascade)
 
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt

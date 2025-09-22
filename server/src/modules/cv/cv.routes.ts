@@ -12,10 +12,8 @@ cvRouter.post(
   CVController.uploadCV
 );
 
-cvRouter.get(
-  "/",
-  protect,
-  CVController.getUserCVs
-);
+cvRouter.get("/", protect, CVController.getUserCVs);
+
+cvRouter.delete("/:cvId", protect, CVController.deleteCV);
 
 export default cvRouter;
