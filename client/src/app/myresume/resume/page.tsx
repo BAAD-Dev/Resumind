@@ -13,13 +13,13 @@ export default function ResumePage() {
         </div>
       </div>
 
-      <div className="bg-white shadow rounded-xl p-6">
+      {/* <div className="bg-white shadow rounded-xl p-6">
         <h2 className="text-lg font-semibold mb-4">History Matching</h2>
         <p className="text-gray-500 text-sm">
           Belum ada history. Nanti hasil matching antara profile & job
           description akan tampil di sini.
         </p>
-      </div>
+      </div> */}
     </>
   );
 }

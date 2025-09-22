@@ -33,6 +33,7 @@ model User {
 model CV {
   id           String    @id @default(auto()) @map("_id") @db.ObjectId
   originalName String
+  cloudinaryPublicId  String
   fileUrl      String    @unique
   isGuest      Boolean   @default(false)
   expiresAt    DateTime? // We'll use this field later for a cleanup job
@@ -88,10 +89,10 @@ model Analysis {
   user      User?        @relation(fields: [userId], references: [id])
 
   cvId      String       @db.ObjectId
-  cv        CV           @relation(fields: [cvId], references: [id])
+  cv        CV           @relation(fields: [cvId], references: [id], onDelete: Cascade)
 
   jobDescriptionId String?      @db.ObjectId
-  jobDescription   JobDescription? @relation(fields: [jobDescriptionId], references: [id])
+  jobDescription   JobDescription? @relation(fields: [jobDescriptionId], references: [id], onDelete: Cascade)
 
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt

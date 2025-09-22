@@ -11,8 +11,8 @@ export default function Price() {
     const dataCustomer = {
       orderId: "order-" + Date.now(),
       amount: 20000,
-      customerName: "Bella",
-      customerEmail: "bella@mail.com",
+      customerName: "garin",
+      customerEmail: "garin@mail.com",
       customerPhone: "081111030205",
     };
 
@@ -39,6 +39,7 @@ export default function Price() {
 
     if (requestData?.token) {
       window.snap.pay(requestData.token, {
+        // Disini Berarti penempatan webhook nya
         onSuccess: (result: any) => console.log("success", result),
         onPending: (result: any) => console.log("pending", result),
         onError: (result: any) => console.error("error", result),
