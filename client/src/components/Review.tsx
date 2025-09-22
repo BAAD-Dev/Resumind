@@ -61,7 +61,7 @@ export default function Reviews() {
               <div className="mb-1 text-gray-700 text-sm font-medium leading-relaxed">
                 {review.quote}
               </div>
-              
+              {/* ini komentar */}
               {/* Bottom section dengan user info dan stars */}
               <div className="flex items-center justify-between pt-2 border-t border-gray-100">
                 <div className="flex items-center gap-3 flex-1 min-w-0">
