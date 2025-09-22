@@ -35,6 +35,7 @@ class CVService {
       dataToSave = {
         originalName: file.originalname,
         fileUrl: uploadResult.secure_url,
+        cloudinaryPublicId: uploadResult.public_id,
         userId: user.id,
         isGuest: false,
         expiresAt: null, // This CV will not expire
@@ -44,6 +45,7 @@ class CVService {
       dataToSave = {
         originalName: file.originalname,
         fileUrl: uploadResult.secure_url,
+        cloudinaryPublicId: uploadResult.public_id,
         userId: null,
         isGuest: true,
         expiresAt: new Date(Date.now() + oneDayInMs), // Set to expire in 24 hours
