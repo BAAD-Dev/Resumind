@@ -50,13 +50,21 @@ class AuthService {
     const { email, password } = credentials;
 
     const user = await prisma.user.findUnique({ where: { email } });
+
     if (!user) {
       throw new Error("Invalid Email or Password", { cause: { status: 401 } });
     }
 
     const isPasswordValid = await compareHash(password, user.password);
+
     if (!isPasswordValid) {
       throw new Error("Invalid Email or Password", { cause: { status: 401 } });
+    }
+
+    if (!user.isVerified) {
+      throw new Error("Please verify your email before logging in.", {
+        cause: { status: 403 },
+      }); // 403 Forbidden
     }
 
     const token = createToken({
@@ -78,6 +86,31 @@ class AuthService {
     });
 
     return userById;
+  }
+
+  async verifyUserEmail(token: string) {
+    // 1. Find the user with this specific, un-used verification token
+    const user = await prisma.user.findUnique({
+      where: { emailVerificationToken: token },
+    });
+
+    if (!user) {
+      throw new Error("Invalid or expired verification token.", {
+        cause: { status: 404 },
+      });
+    }
+
+    // 2. Update the user to mark them as verified
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        isVerified: true,
+        emailVerifiedAt: new Date(),
+        emailVerificationToken: null, // CRITICAL: Invalidate the token after use
+      },
+    });
+
+    return { message: "Email verified successfully. You can now log in." };
   }
 }
 
