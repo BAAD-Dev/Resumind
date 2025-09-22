@@ -53,6 +53,16 @@ class AuthService {
     });
     return token;
   }
+
+  async userById(id: string) {
+    const userById = await prisma.user.findUnique({
+      omit: {
+        password: true
+      }, where: { id }
+    })
+
+    return userById
+  }
 }
 
 export default new AuthService();

@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import AuthService from "./auth.service.js";
 import { registerSchema, loginSchema } from "./auth.types.js";
+import authService from "./auth.service.js";
 
 class AuthController {
   async register(req: Request, res: Response, next: NextFunction) {
@@ -27,6 +28,20 @@ class AuthController {
       res.json({ token });
     } catch (err) {
       next(err);
+    }
+  }
+
+  async userById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const user = req.user!
+
+      const dataUser = await authService.userById(user.id)
+
+      res.status(200).json({
+        dataUser
+      })
+    } catch (err) {
+      next(err)
     }
   }
 }
