@@ -9,9 +9,11 @@
     "module": "nodenext", // Use modern Node.js module resolution for ESM.
     "target": "esnext", // Compile to the latest JavaScript version.
     "moduleDetection": "force", // Ensures files are treated as modules.
+    "moduleResolution": "nodenext",
 
     // === Type Definitions ===
-    // "types": [], // <-- REMOVE or COMMENT OUT this line.
+    "types": ["node"], // <-- REMOVE or COMMENT OUT this line.
+    "lib": ["esnext"],
     // By removing it, TypeScript will automatically include all types from your @types/* dependencies (like @types/node and @types/express).
     // If you keep it as an empty array, TS won't see those types.
 
@@ -22,6 +24,7 @@
 
     // === Stricter Typechecking (Great choices!) ===
     "strict": true, // Enable all strict type-checking options.
+    "jsx": "react-jsx",
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
 
