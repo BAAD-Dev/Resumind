@@ -22,6 +22,10 @@ model User {
   role      UserRole @default(FREE)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  isVerified           Boolean   @default(false)
+  emailVerificationToken String?   @unique
+  emailVerifiedAt      DateTime?
+
 
   // --- Relations ---
   cvs             CV[]

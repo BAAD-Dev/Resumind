@@ -2,11 +2,10 @@ import { prisma } from "../../db/prisma.js";
 import { hashPassword, compareHash } from "../../utils/bcryptjs.js";
 import { createToken } from "../../utils/jwt.js";
 import type { RegisterUserInput, LoginUserInput } from "./auth.types.js";
+import { randomUUID } from "crypto";
+import EmailService from "../../services/email.js";
 
 class AuthService {
-  /**
-   * Registers a new user.
-   */
   async registerUser(userData: RegisterUserInput) {
     const { name, username, email, password } = userData;
 
@@ -21,18 +20,32 @@ class AuthService {
       throw new Error("Email already in use", { cause: { status: 409 } });
     }
 
-    const hashedPassword = await hashPassword(password);
+    const hashed = await hashPassword(password);
+
+    // 3. Generate a unique, random token for email verification
+    const verificationToken = randomUUID();
+
     const user = await prisma.user.create({
-      data: { name, username, email, password: hashedPassword },
+      data: {
+        name,
+        username,
+        email,
+        password: hashed,
+        emailVerificationToken: verificationToken, // 👈 4. Save the token
+      },
     });
+
+    // 5. Send the verification email!
+    await EmailService.sendVerification(
+      user.email,
+      user.name,
+      verificationToken
+    );
 
     const { password: _, ...userWithoutPassword } = user;
     return userWithoutPassword;
   }
 
-  /**
-   * Logs in a user and returns a JWT.
-   */
   async loginUser(credentials: LoginUserInput) {
     const { email, password } = credentials;
 
@@ -59,11 +72,12 @@ class AuthService {
       omit: {
         password: true,
         createdAt: true,
-        updatedAt: true
-      }, where: { id }
-    })
+        updatedAt: true,
+      },
+      where: { id },
+    });
 
-    return userById
+    return userById;
   }
 }
 
