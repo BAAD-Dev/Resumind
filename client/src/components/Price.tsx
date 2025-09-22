@@ -33,10 +33,10 @@ const tiers = [
     ],
   },
   {
-    name: "Pro Plan",
-    id: "tier-pro",
+    name: "Premium Plan",
+    id: "tier-premium",
     href: "#",
-    priceMonthly: "Rp.9.999",
+    priceMonthly: "Rp.29.999",
     description:
       "Dedicated support and unlimited analysis for serious job seekers.",
     features: [
@@ -55,7 +55,7 @@ function classNames(...classes: (string | boolean)[]) {
 }
 
 export default function Pricing() {
-  const [hoveredPlan, setHoveredPlan] = useState("Pro Plan");
+  const [hoveredPlan, setHoveredPlan] = useState("Premium Plan");
 
   return (
     <div
@@ -81,8 +81,8 @@ export default function Pricing() {
               onMouseEnter={() => setHoveredPlan(tier.name)}
               className={classNames(
                 isHovered
-                  ? "bg-blue-600 shadow-2xl scale-105"
-                  : "bg-blue-500 scale-100 sm:mx-8 lg:mx-0",
+                  ? "bg-blue-700 shadow-2xl scale-105"
+                  : "bg-[#162B60] scale-100 sm:mx-8 lg:mx-0",
                 isHovered
                   ? "z-10"
                   : tierIdx === 0
@@ -99,7 +99,7 @@ export default function Pricing() {
                 <span className="text-5xl font-bold tracking-tight text-white">
                   {tier.priceMonthly}
                 </span>
-                {tier.name === "Pro Plan" && (
+                {tier.name === "Premium Plan" && (
                   <span className="text-base text-blue-200">/month</span>
                 )}
               </p>

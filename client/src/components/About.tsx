@@ -28,7 +28,7 @@ const About = () => {
             <div className="mt-8">
               <Link
                 href="/analyze"
-                className="inline-block bg-blue-900 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-lg transition duration-300"
+                className="inline-block bg-[#162B60] hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-lg transition duration-300"
               >
                 Try Free Analysis
               </Link>

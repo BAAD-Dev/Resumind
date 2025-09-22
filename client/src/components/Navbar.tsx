@@ -44,7 +44,7 @@ const Navbar = () => {
                 Price
               </Link>
               <Link
-                href="/contacts"
+                href="/footer"
                 className="text-gray-600 hover:text-blue-800 px-3 py-2 rounded-md text-sm font-medium">
                 Contacts
               </Link>
@@ -121,7 +121,7 @@ const Navbar = () => {
               Price
             </Link>
             <Link
-              href="/contacts"
+              href="/footer"
               onClick={handleLinkClick}
               className="text-gray-600 hover:bg-gray-100 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium">
               Contacts
@@ -129,7 +129,7 @@ const Navbar = () => {
             <Link
               href="/login"
               onClick={handleLinkClick}
-              className="bg-blue-600 w-full text-left hover:bg-blue-700 text-white font-bold py-2 px-3 rounded-lg mt-2">
+              className="bg-blue-700 w-full text-left hover:bg-blue-800 text-white font-bold py-2 px-3 rounded-lg mt-2">
               Login
             </Link>
           </div>
