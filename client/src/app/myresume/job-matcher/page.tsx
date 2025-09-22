@@ -1,15 +1,4 @@
-"use client";
-
-import Link from "next/link";
-import { useState } from "react";
-
 export default function JobMatcherPage() {
-  const [user] = useState({ name: "Nama User" });
-
-  const handleLogout = () => {
-    console.log("Logout clicked");
-  };
-
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Content */}
