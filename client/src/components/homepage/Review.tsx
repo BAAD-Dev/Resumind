@@ -5,27 +5,51 @@ import Image from 'next/image';
 const reviews = [
   {
     quote: "Resumind completely changed my job search. The ATS analysis helped me get past the bots and in front of real recruiters. Landed a new role in 3 weeks!",
-    name: "Sarah L.",
-    title: "Marketing Manager",
-    avatar: "https://images.pexels.com/photos/41539/attractive-beautiful-brunette-cute-41539.jpeg",
+    name: "Gabriela Vania",
+    title: "Frontend Developer",
+    avatar: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?_gl=1*uw60ta*_ga*MTU0MTI1NTEwLjE3NTU2Njg0NDA.*_ga_8JE65Q40S6*czE3NTg1MjkyOTYkbzEwJGcxJHQxNzU4NTI5OTExJGoxNiRsMCRoMA..",
   },
   {
     quote: "As a developer, I know code, not keywords. This tool was a lifesaver. It pinpointed exactly what my resume was missing for the jobs I wanted.",
-    name: "David Chen",
-    title: "Software Engineer",
+    name: "Alfikri Zein",
+    title: "Backend Developer",
     avatar: "https://images.pexels.com/photos/25758/pexels-photo.jpg",
   },
   {
-    quote: "I was stuck in a career rut. Resumind's feedback gave me the confidence to apply for senior roles. The pro plan is worth every penny.",
-    name: "Maria Garcia",
-    title: "Senior Accountant",
+    quote: "I was stuck in a career rut. Resumind's feedback gave me the confidence to apply for senior roles. The premium plan is worth every penny.",
+    name: "Dewi Aminah",
+    title: "Frontend Developer",
     avatar: "https://images.pexels.com/photos/69494/pexels-photo-69494.jpeg",
   },
   {
-    quote: "The interface is so clean and easy to use. I got an 88% match score on my dream job application and got the interview!",
-    name: "James T.",
-    title: "UX Designer",
+    quote: "The interface is so clean and easy to use. I got an 97% match score on my dream job application and got the interview!",
+    name: "Garin Akbar S.",
+    title: "Full Stack Developer",
     avatar: "https://images.pexels.com/photos/1990/man-person-people-emotions.jpg",
+  },
+  {
+    quote: "Resumind helped me create a professional resume and I received more interview calls than ever before.",
+    name: "Fathan Mania Mantap",
+    title: "Marketing Specialist",
+    avatar: "https://images.pexels.com/photos/256522/pexels-photo-256522.jpeg",
+  },
+  {
+    quote: "The actionable feedback made my resume stand out. I landed a job at a major tech company faster than I expected.",
+    name: "Faqihihi",
+    title: "Product Manager",
+    avatar: "https://images.pexels.com/photos/91227/pexels-photo-91227.jpeg",
+  },
+  {
+    quote: "The ATS analysis was a game changer for me. Now my resume always passes the initial screening stage.",
+    name: "Axel Excel",
+    title: "Software Engineer",
+    avatar: "https://images.pexels.com/photos/39866/entrepreneur-startup-start-up-man-39866.jpeg?_gl=1*1htybee*_ga*MTU0MTI1NTEwLjE3NTU2Njg0NDA.*_ga_8JE65Q40S6*czE3NTg1MjkyOTYkbzEwJGcxJHQxNzU4NTI5NzEwJGoyNCRsMCRoMA..",
+  },
+  {
+    quote: "Applying for jobs became so much easier with Resumind. The tips are relevant for various positions.",
+    name: "Intan Permata",
+    title: "Data Analyst",
+    avatar: "https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?_gl=1*1ijh2rb*_ga*MTU0MTI1NTEwLjE3NTU2Njg0NDA.*_ga_8JE65Q40S6*czE3NTg1MjkyOTYkbzEwJGcxJHQxNzU4NTI5Nzk2JGoyOCRsMCRoMA..",
   }
 ];
 
@@ -52,21 +76,20 @@ export default function Reviews() {
         </p>
       </div>
       <div className="relative w-full max-w-7xl mx-auto overflow-hidden flex items-center py-4">
-        <div className="flex animate-scroll gap-8 items-center">
+        <div className="items-center gap-8 md:justify-start [&>div]:mx-1 flex animate-scroll min-w-max">
           {([...reviews, ...reviews]).map((review, index) => (
             <div
               key={index}
-              className="flex-shrink-0 w-[420px] sm:w-[500px] md:h-[180px] p-5 bg-white rounded-[28px] shadow-lg border border-gray-100 flex flex-col justify-between"
+              className="flex-shrink-0 w-[420px] sm:w-[500px] md:h-[180px] p-5 bg-white rounded-[28px] shadow-lg border border-gray-100 flex flex-col justify-between snap-start snap-always scroll-m-5 first-of-type:scroll-m-10 transition-all"
             >
-              <div className="mb-1 text-gray-700 text-sm font-medium leading-relaxed">
+              <blockquote className="mb-1 text-gray-700 text-sm font-medium leading-relaxed">
                 {review.quote}
-              </div>
-              {/* ini komentar */}
+              </blockquote>
               {/* Bottom section dengan user info dan stars */}
               <div className="flex items-center justify-between pt-2 border-t border-gray-100">
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   <Image 
-                    className="rounded-full flex-shrink-0" 
+                    className="rounded-full object-cover" 
                     src={review.avatar} 
                     alt={review.name} 
                     width={36} 

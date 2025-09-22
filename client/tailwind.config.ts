@@ -5,6 +5,9 @@ module.exports = {
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  safelist: [
+    'animate-scroll'
+  ],
   theme: {
     extend: {
       colors: {
@@ -27,6 +30,7 @@ module.exports = {
       animation: {
         scroll: 'scroll 40s linear infinite',
       },
+      
       keyframes: {
         scroll: {
           '0%': { transform: 'translateX(0)' },
