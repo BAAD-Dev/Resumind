@@ -2,11 +2,12 @@ import express from "express";
 import cors from "cors";
 import { errorHandler } from "./middlewares/errorHandler.js";
 import apiRouter from "./router/index.js";
+import { env } from "./config/env.js";
 
 const app = express();
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN,
+    origin: env.corsOrigins,
     credentials: true,
   })
 );
