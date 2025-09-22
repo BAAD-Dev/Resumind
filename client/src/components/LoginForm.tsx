@@ -36,7 +36,7 @@ export default function LoginForm() {
         throw new Error(data.error || "Login failed");
       }
 
-      router.push("/dashboard");
+      router.push("/");
       router.refresh();
     } catch (error: any) {
       setError(error.message || "Something went wrong");

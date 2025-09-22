@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-// ===== Request (Body) =====
 export const CreatePaymentBodySchema = z.object({
     orderId: z.string().min(3),
     amount: z.number().int().positive(),
@@ -10,7 +9,6 @@ export const CreatePaymentBodySchema = z.object({
 });
 export type CreatePaymentBody = z.infer<typeof CreatePaymentBodySchema>;
 
-// ===== Service Params =====
 export type CreateSnapParams = {
     orderId: string;
     amount: number;
@@ -19,7 +17,6 @@ export type CreateSnapParams = {
     customerPhone?: string | undefined;
 };
 
-// ===== Service Result / Controller Response =====
 export type SnapCreateTransactionResult = {
     token: string;
     redirect_url?: string;
@@ -27,5 +24,27 @@ export type SnapCreateTransactionResult = {
 
 export type CreatePaymentResponse = {
     token: string;
-    redirect_url?: string | undefined;
+    redirect_url?: string;
+    orderId: string;
+};
+
+export type MidtransWebhookBody = {
+    order_id: string;
+    transaction_id?: string;
+    transaction_status:
+    | "capture"
+    | "settlement"
+    | "pending"
+    | "deny"
+    | "cancel"
+    | "expire"
+    | "refund"
+    | "partial_refund"
+    | string;
+    fraud_status?: "accept" | "challenge" | "deny" | string;
+    payment_type?: string;
+    status_code: string;
+    gross_amount: string;
+    signature_key: string;
+    settlement_time?: string;
 };

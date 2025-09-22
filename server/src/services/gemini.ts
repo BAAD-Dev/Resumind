@@ -4,7 +4,7 @@ import { env } from "../config/env.js";
 
 const ai = new GoogleGenAI({ apiKey: env.geminiApiKey });
 
-const MODEL = "gemini-2.5-pro" as const;
+const MODEL = "gemini-2.5-flash" as const;
 
 class GeminiService {
   async analyzeFile(
@@ -37,6 +37,7 @@ class GeminiService {
         throw new Error("Gemini no response", { cause: { status: 400 } });
       return JSON.parse(text);
     } catch (err) {
+      console.log(">>>>>>>>>>ERROR: ", err);
       console.error("Error analyzing file with Gemini:", err);
       throw new Error("Failed to get analysis from Gemini.");
     }

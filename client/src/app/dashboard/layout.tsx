@@ -29,7 +29,8 @@ export default function DashboardLayout({
                 pathname === "/dashboard"
                   ? "bg-blue-100 text-blue-900 font-medium"
                   : "text-gray-700 hover:bg-blue-100 hover:text-blue-900"
-              }`}>
+              }`}
+            >
               Home
             </Link>
             <Link
@@ -38,7 +39,8 @@ export default function DashboardLayout({
                 pathname === "/dashboard/profile"
                   ? "bg-blue-100 text-blue-900 font-medium"
                   : "text-gray-700 hover:bg-blue-100 hover:text-blue-900"
-              }`}>
+              }`}
+            >
               Profile
             </Link>
             <Link
@@ -47,12 +49,14 @@ export default function DashboardLayout({
                 pathname === "/dashboard/my-resume"
                   ? "bg-blue-100 text-blue-900 font-medium"
                   : "text-gray-700 hover:bg-blue-100 hover:text-blue-900"
-              }`}>
+              }`}
+            >
               My Resume
             </Link>
             <Link
               href="/dashboard/job-matcher"
-              className="block px-6 py-2 text-gray-700 hover:bg-blue-100 hover:text-blue-900 rounded-md">
+              className="block px-6 py-2 text-gray-700 hover:bg-blue-100 hover:text-blue-900 rounded-md"
+            >
               Job Matcher
             </Link>
           </nav>
@@ -81,14 +85,16 @@ export default function DashboardLayout({
             <button
               onClick={handleLogout}
               className="p-2 rounded-full hover:bg-gray-100 transition"
-              title="Logout">
+              title="Logout"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth={2}
                 stroke="currentColor"
-                className="w-6 h-6 text-gray-600">
+                className="w-6 h-6 text-gray-600"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"

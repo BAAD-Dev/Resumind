@@ -1,18 +1,12 @@
 "use client";
-
 import { useState } from "react";
-import Link from "next/link";
 
 export default function ProfilePage() {
   const [user] = useState({
-    name: "Gabriela Vania",
-    email: "gabriela@example.com",
+    name: "Test",
+    email: "test@mail.com",
     role: "Software Engineer",
   });
-
-  const handleLogout = () => {
-    console.log("Logout clicked");
-  };
 
   return (
     <div className="flex min-h-screen bg-gray-50">
