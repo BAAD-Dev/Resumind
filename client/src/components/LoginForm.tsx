@@ -30,13 +30,13 @@ export default function LoginForm() {
       );
 
       const data = await response.json();
-      console.log(data, "<< Login berhasil");
+      // console.log(data, "<< Login berhasil");
 
       if (!response.ok) {
         throw new Error(data.error || "Login failed");
       }
 
-      router.push("/");
+      router.push("/dashboard");
       router.refresh();
     } catch (error: any) {
       setError(error.message || "Something went wrong");
@@ -77,7 +77,25 @@ export default function LoginForm() {
       </div>
 
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-        <div className="w-[28rem] bg-white rounded-4xl shadow-2xl p-10">
+        <div className="w-[28rem] bg-white rounded-4xl shadow-2xl p-10 relative">
+          {/* Arrow back */}
+          <Link
+            href="/"
+            className="absolute left-5 top-5 text-gray-600 hover:text-blue-900 transition">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth="2"
+              stroke="black"
+              className="size-6">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
+              />
+            </svg>{" "}
+          </Link>
           <h1 className="text-4xl font-semibold mb-8 text-center">Login</h1>
 
           <form className="space-y-5" onSubmit={handleSubmit}>
@@ -109,7 +127,7 @@ export default function LoginForm() {
 
             <button
               type="submit"
-              className="w-full bg-blue-900 mt-3 text-white py-3 rounded-md shadow hover:bg-[#162B60] transition">
+              className="cursor-pointer w-full bg-blue-900 mt-3 text-white py-3 rounded-md shadow hover:bg-[#162B60] transition">
               Sign in
             </button>
           </form>
