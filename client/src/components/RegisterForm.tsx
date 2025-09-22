@@ -30,10 +30,8 @@ export default function RegisterForm() {
           body: JSON.stringify(form),
         }
       );
-      console.log(response);
 
       const data = await response.json();
-      console.log(data, "<< ini masuk datanya");
 
       if (!response.ok) {
         throw new Error(data.message || "Register failed");
@@ -134,6 +132,7 @@ export default function RegisterForm() {
                 placeholder="Password"
                 className="w-full mt-3 p-3 border rounded-md focus:ring-2 focus:ring-blue-500"
                 required
+                minLength={6}
               />
             </div>
 
