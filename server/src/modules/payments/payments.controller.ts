@@ -11,7 +11,7 @@ export async function createPayment(req: Request, res: Response, next: NextFunct
         }
         // const user = req.user
         // const userID = user?.id
-        const TEST_USER_ID = "68d0012355f72ae0b7074afa";
+        const TEST_USER_ID = "68d0c2d6e46814b25b5f29b1";
         const { orderId, amount, customerName, customerEmail, customerPhone } = parsed.data;
 
         const result = await createPaymentFlow({

@@ -1,7 +1,9 @@
 export default function MyResumePage() {
   return (
     <>
-      <h1>test</h1>
+      <section className="flex h-full justify-center items-center">
+        <h1>MyResume</h1>
+      </section>
     </>
   );
 }

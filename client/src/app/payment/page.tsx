@@ -11,8 +11,8 @@ export default function Price() {
     const dataCustomer = {
       orderId: "order-" + Date.now(),
       amount: 20000,
-      customerName: "garin",
-      customerEmail: "garin@mail.com",
+      customerName: "Akbar Subiyantoro",
+      customerEmail: "akbar@mail.com",
       customerPhone: "081111030205",
     };
 
