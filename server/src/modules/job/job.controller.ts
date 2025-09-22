@@ -6,12 +6,11 @@ class JobController {
   async createJob(req: Request, res: Response, next: NextFunction) {
     try {
       const validatedData = createJobFromTextSchema.parse(req.body);
-      const user = req.user!; // Safe because of the 'protect' middleware
+      const user = req.user!;
 
       const newJob = await JobService.createJobFromText(validatedData, user.id);
       res.status(201).json(newJob);
     } catch (err) {
-      // Pass all errors to our central handler for a consistent response
       next(err);
     }
   }
@@ -25,6 +24,20 @@ class JobController {
       next(err);
     }
   }
+
+  async deleteJob(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { jobId } = req.params;
+      if (!jobId)
+        throw new Error("jobId not found", { cause: { status: 400 } });
+      const user = req.user!;
+      const result = await JobService.deleteJobForUser(jobId, user.id);
+      res.status(200).json(result);
+    } catch (err) {
+      next(err);
+    }
+  }
+  
 }
 
 export default new JobController();

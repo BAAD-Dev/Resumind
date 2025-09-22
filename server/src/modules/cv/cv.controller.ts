@@ -28,6 +28,18 @@ class CVController {
       next(error);
     }
   }
+
+  async deleteCV(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { cvId } = req.params;
+      if (!cvId) throw new Error("No cvId found", { cause: { status: 400 } });
+      const user = req.user!;
+      const result = await CVService.deleteCVforUser(cvId, user.id);
+      res.status(200).json(result);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default new CVController();

@@ -35,6 +35,7 @@ class CVService {
       dataToSave = {
         originalName: file.originalname,
         fileUrl: uploadResult.secure_url,
+        cloudinaryPublicId: uploadResult.public_id,
         userId: user.id,
         isGuest: false,
         expiresAt: null, // This CV will not expire
@@ -44,6 +45,7 @@ class CVService {
       dataToSave = {
         originalName: file.originalname,
         fileUrl: uploadResult.secure_url,
+        cloudinaryPublicId: uploadResult.public_id,
         userId: null,
         isGuest: true,
         expiresAt: new Date(Date.now() + oneDayInMs), // Set to expire in 24 hours
@@ -68,6 +70,27 @@ class CVService {
       },
     });
     return cvs;
+  }
+
+  async deleteCVforUser(cvId: string, userId: string) {
+    const cv = await prisma.cV.findUnique({
+      where: {
+        id: cvId,
+        userId: userId,
+      },
+    });
+    if (!cv) {
+      throw new Error("CV not found", { cause: { status: 404 } });
+    }
+
+    if (cv.cloudinaryPublicId) {
+      await cloudinary.uploader.destroy(cv.cloudinaryPublicId, {
+        resource_type: "raw",
+      });
+    }
+
+    await prisma.cV.delete({ where: { id: cvId } });
+    return {message : "CV and all associated analysis deleted successfully."}
   }
 }
 
