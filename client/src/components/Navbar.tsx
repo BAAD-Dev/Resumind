@@ -59,6 +59,14 @@ export default function Navbar({ isLoggedIn }: NavbarProps) {
               </Link>
             )}
 
+            {isLoggedIn && (
+              <Link
+                href="/payment"
+                className="text-gray-600 hover:text-blue-800">
+                Plan
+              </Link>
+            )}
+
             {isLoggedIn ? (
               <form action={LogoutHandler}>
                 <button
