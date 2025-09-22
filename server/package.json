@@ -1,10 +1,11 @@
 {
   "name": "server",
   "version": "1.0.0",
+  "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/server.js",
-    "dev": "nodemon --watch src --exec \"node --loader ts-node/esm src/server.ts\""
+    "start": "node dist/index.js",
+    "dev": "nodemon"
   },
   "type": "module",
   "keywords": [],
@@ -12,27 +13,13 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@google/genai": "^1.20.0",
-    "@prisma/client": "^6.16.2",
-    "axios": "^1.12.2",
     "bcryptjs": "^3.0.2",
-    "cloudinary": "^2.7.0",
-    "cors": "^2.8.5",
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
-    "jsonwebtoken": "^9.0.2",
-    "midtrans-client": "^1.4.3",
-    "mongodb": "^6.19.0",
-    "multer": "^2.0.2",
-    "prisma": "^6.16.2",
-    "zod": "^4.1.9"
+    "prisma": "^6.16.2"
   },
   "devDependencies": {
-    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
-    "@types/jsonwebtoken": "^9.0.10",
-    "@types/midtrans-client": "^1.4.0",
-    "@types/multer": "^2.0.0",
     "@types/node": "^24.5.1",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
