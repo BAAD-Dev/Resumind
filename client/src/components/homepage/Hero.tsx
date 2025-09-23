@@ -1,4 +1,3 @@
-
 import Image from "next/image";
 import resumeIllustration from "../../../public/image/heroillus.png";
 import Link from "next/link";
