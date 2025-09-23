@@ -18,9 +18,7 @@ export async function createJobFromText(input: {
             Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({
-            title: input.title?.trim() || "Pasted Job Posting",
-            company: input.company?.trim() || undefined,
-            originalText: input.originalText,
+            jobText: input.originalText,
         }),
         cache: "no-store",
     });
@@ -54,8 +52,8 @@ export async function analyzeJobMatchAction(formData: FormData) {
         jobId = await createJobFromText({ title: jobTitle, company: jobCompany, originalText: jobText });
     }
     const token = (await cookies()).get("token")?.value;
-
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/analysis/job-match`, {
+    console.log(cvId, jobId, "Cekkkkkkkkkk000000")
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/analysis/match`, {
 
         method: "POST",
         headers: {

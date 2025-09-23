@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic";
 
+import { formatDate } from "@/lib/format";
 import { analyzeJobMatchAction, deleteJobAction } from "./action";
 import {
   getCVs,
@@ -8,17 +9,6 @@ import {
   pickLatestJobMatch,
 } from "./data";
 import AutoRefresher from "@/components/analysis/analysisCVAutoRefresher";
-
-function formatDate(iso: string) {
-  const d = new Date(iso);
-  return new Intl.DateTimeFormat(undefined, {
-    year: "numeric",
-    month: "short",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(d);
-}
 
 export default async function JobMatcherPage({
   searchParams,
