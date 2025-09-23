@@ -1,6 +1,8 @@
 import type { Request, Response, NextFunction } from "express";
 import AuthService from "./auth.service.js";
 import { registerSchema, loginSchema } from "./auth.types.js";
+import authService from "./auth.service.js";
+import { env } from "../../config/env.js";
 
 class AuthController {
   async register(req: Request, res: Response, next: NextFunction) {
@@ -22,9 +24,39 @@ class AuthController {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
+        path: "/",
       });
 
       res.json({ token });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async getUserById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const user = req.user!;
+
+      const dataUser = await authService.getUserById(user.id);
+
+      res.status(200).json({
+        dataUser,
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async verifyEmail(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { token } = req.params;
+      if (!token)
+        throw new Error("Unique token not found", { cause: { status: 400 } });
+      const result = await AuthService.verifyUserEmail(token);
+
+      // In a real app, you would redirect to your frontend's login page
+      // For now, we'll send a success message.
+      return res.redirect(`${env.frontendUrl}/login?verified=true`);
     } catch (err) {
       next(err);
     }

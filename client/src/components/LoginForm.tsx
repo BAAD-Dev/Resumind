@@ -2,12 +2,35 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
+import { VerifyModal } from "./login/VerifyModal";
 
 export default function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [openVerifyModal, setOpenVerifyModal] = useState(false);
+
+  const verified = useMemo(
+    () => searchParams.get("verified") === "true",
+    [searchParams]
+  );
+
+  useEffect(() => {
+    if (verified) {
+      setOpenVerifyModal(true);
+
+      const url = new URL(window.location.href);
+      url.searchParams.delete("verified");
+      const cleaned =
+        url.pathname +
+        (url.searchParams.toString() ? `?${url.searchParams.toString()}` : "");
+      router.replace(cleaned, { scroll: false });
+    }
+  }, [verified, router]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -30,7 +53,7 @@ export default function LoginForm() {
       );
 
       const data = await response.json();
-      console.log(data, "<< Login berhasil");
+      // console.log(data, "<< Login berhasil");
 
       if (!response.ok) {
         throw new Error(data.error || "Login failed");
@@ -38,8 +61,12 @@ export default function LoginForm() {
 
       router.push("/");
       router.refresh();
-    } catch (error: any) {
-      setError(error.message || "Something went wrong");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("Something went wrong");
+      }
     }
   };
 
@@ -77,9 +104,30 @@ export default function LoginForm() {
       </div>
 
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-        <div className="w-[28rem] bg-white rounded-4xl shadow-2xl p-10">
+        <div className="w-[28rem] bg-white rounded-4xl shadow-2xl p-10 relative">
+          {/* Arrow back */}
+          <Link
+            href="/"
+            className="absolute left-5 top-5 text-gray-600 hover:text-blue-900 transition"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth="2"
+              stroke="black"
+              className="size-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
+              />
+            </svg>{" "}
+          </Link>
           <h1 className="text-4xl font-semibold mb-8 text-center">Login</h1>
 
+          {/* Email */}
           <form className="space-y-5" onSubmit={handleSubmit}>
             <div>
               <label className="block text-sm font-base">Email</label>
@@ -92,15 +140,27 @@ export default function LoginForm() {
               />
             </div>
 
-            <div>
+            {/* Password */}
+            <div className="relative">
               <label className="block text-sm font-base mt-4">Password</label>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 name="password"
-                placeholder="Password"
-                className="w-full mt-3 p-3 border rounded-md focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter password"
+                className="w-full mt-4 p-3 border rounded-md focus:ring-2 focus:ring-blue-500 pr-10"
                 required
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-3 top-[52px] text-gray-500 hover:text-gray-700"
+              >
+                {showPassword ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
+              </button>
             </div>
 
             {error && (
@@ -109,7 +169,8 @@ export default function LoginForm() {
 
             <button
               type="submit"
-              className="w-full bg-blue-900 mt-3 text-white py-3 rounded-md shadow hover:bg-[#162B60] transition">
+              className="cursor-pointer w-full bg-blue-900 mt-3 text-white py-3 rounded-md shadow hover:bg-[#162B60] transition"
+            >
               Sign in
             </button>
           </form>
@@ -122,6 +183,10 @@ export default function LoginForm() {
           </p>
         </div>
       </div>
+      <VerifyModal
+        open={openVerifyModal}
+        onClose={() => setOpenVerifyModal(false)}
+      />
     </div>
   );
 }

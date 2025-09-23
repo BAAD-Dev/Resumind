@@ -22,6 +22,10 @@ model User {
   role      UserRole @default(FREE)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  isVerified           Boolean   @default(false)
+  emailVerificationToken String?   @unique
+  emailVerifiedAt      DateTime?
+
 
   // --- Relations ---
   cvs             CV[]
@@ -31,43 +35,44 @@ model User {
 }
 
 model CV {
-  id           String    @id @default(auto()) @map("_id") @db.ObjectId
-  originalName String
-  fileUrl      String    @unique
-  isGuest      Boolean   @default(false)
-  expiresAt    DateTime? // We'll use this field later for a cleanup job
+  id                 String    @id @default(auto()) @map("_id") @db.ObjectId
+  originalName       String
+  cloudinaryPublicId String?
+  fileUrl            String    @unique
+  isGuest            Boolean   @default(false)
+  expiresAt          DateTime? // We'll use this field later for a cleanup job
 
   // --- Relations ---
-  userId       String?   @db.ObjectId
-  user         User?     @relation(fields: [userId], references: [id])
-  analyses     Analysis[]
+  userId   String?    @db.ObjectId
+  user     User?      @relation(fields: [userId], references: [id])
+  analyses Analysis[]
 
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model JobDescription {
   id               String    @id @default(auto()) @map("_id") @db.ObjectId
   title            String
   company          String
-  location         String?   
-  employmentType   String?   
-  experienceLevel  String?   
-  summary          String?   
-  keySkills        String[]  
-  responsibilities String[]  
-  requirements     String[]  
+  location         String?
+  employmentType   String?
+  experienceLevel  String?
+  summary          String?
+  keySkills        String[]
+  responsibilities String[]
+  requirements     String[]
   originalText     String
   isGuest          Boolean   @default(false)
   expiresAt        DateTime?
 
   // --- Relations ---
-  userId           String?   @db.ObjectId
-  user             User?     @relation(fields: [userId], references: [id])
-  analyses         Analysis[]
+  userId   String?    @db.ObjectId
+  user     User?      @relation(fields: [userId], references: [id])
+  analyses Analysis[]
 
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum AnalysisType {
@@ -84,17 +89,17 @@ model Analysis {
   expiresAt DateTime?
 
   // --- Relations ---
-  userId    String?      @db.ObjectId
-  user      User?        @relation(fields: [userId], references: [id])
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id])
 
-  cvId      String       @db.ObjectId
-  cv        CV           @relation(fields: [cvId], references: [id])
+  cvId String @db.ObjectId
+  cv   CV     @relation(fields: [cvId], references: [id], onDelete: Cascade)
 
-  jobDescriptionId String?      @db.ObjectId
-  jobDescription   JobDescription? @relation(fields: [jobDescriptionId], references: [id])
+  jobDescriptionId String?         @db.ObjectId
+  jobDescription   JobDescription? @relation(fields: [jobDescriptionId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum OrderStatus {
@@ -107,11 +112,11 @@ enum OrderStatus {
 }
 
 model Order {
-  id            String      @id @default(auto()) @map("_id") @db.ObjectId
-  orderId       String      @unique
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  orderId String @unique
 
-  userId        String?     @db.ObjectId
-  user          User?       @relation(fields: [userId], references: [id])
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id])
 
   amount        Int
   status        OrderStatus @default(PENDING)

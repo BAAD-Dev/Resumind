@@ -79,7 +79,20 @@ class JobService {
       where: { userId },
       orderBy: { createdAt: "desc" },
     });
-    return jobs
+    return jobs;
+  }
+
+  async deleteJobForUser(jobId: string, userId: string) {
+    // Prisma's delete operation is smart. It will automatically fail if
+    // a job with this ID and userId is not found, providing security.
+    await prisma.jobDescription.delete({
+      where: { id: jobId, userId: userId },
+    });
+
+    return {
+      message:
+        "Job Description and all associated analyses deleted successfully.",
+    };
   }
 }
 

@@ -1,37 +1,69 @@
 import type { Request, Response, NextFunction } from "express";
-import { createSnapTransaction } from "./payments.service.js";
+import { randomUUID } from "crypto";
 import {
-    CreatePaymentBodySchema,
-    type CreateSnapParams,
-    type SnapCreateTransactionResult,
-    type CreatePaymentResponse,
-} from "./payments.types.js";
+  createPaymentFlow,
+  handleMidtransWebhook,
+  verifyMidtransSignature,
+} from "./payments.service.js";
+import type { MidtransWebhookBody } from "./payments.types.js";
 
-export async function createPayment(req: Request, res: Response, next: NextFunction) {
-    try {
-        const parsed = CreatePaymentBodySchema.safeParse(req.body);
-        if (!parsed.success) {
-            return res.status(400).json({
-                message: "Invalid body",
-                errors: parsed.error.flatten(),
-            });
-        }
+// We define the price for the premium plan here on the backend for security.
 
-        const input: CreateSnapParams = parsed.data;
+const PREMIUM_PLAN_PRICE = 29999; // e.g., Rp 29,999
+/** POST /payments/create */
+export async function createPayment(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const user = req.user!; // We get the real, logged-in user from the 'protect' middleware
+    console.log(">>>>>>>>>>.", req.user);
 
-        const tx: SnapCreateTransactionResult = await createSnapTransaction(input);
+    // The server generates the unique orderId for security
+    const orderId = `RESUMIND-UPGRADE-${user.id.slice(-4)}-${randomUUID().slice(
+      0,
+      8
+    )}`;
 
-        if (!tx?.token) {
-            return res.status(400).json({ message: "Failed to create Midtrans transaction" });
-        }
+    const result = await createPaymentFlow({
+      userId: user.id,
+      orderId: orderId,
+      amount: PREMIUM_PLAN_PRICE,
+      customerName: user.username,
+      customerEmail: user.email,
+    });
 
-        const response: CreatePaymentResponse = {
-            token: tx.token,
-            redirect_url: tx.redirect_url,
-        };
+    return res.status(201).json(result);
+  } catch (err) {
+    next(err);
+  }
+}
 
-        return res.status(201).json(response);
-    } catch (err) {
-        next(err);
+/** POST /payments/webhook */
+export async function midtransWebhook(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const body = req.body as MidtransWebhookBody;
+
+    if (!verifyMidtransSignature(body)) {
+      // Use next(err) for consistent error handling
+      throw new Error("Invalid Midtrans signature.", {
+        cause: { status: 403 },
+      });
     }
+
+    const result = await handleMidtransWebhook(body);
+    if (!result.ok) {
+      // Let the central error handler manage this
+      throw new Error(`Webhook processing failed: ${result.reason}`);
+    }
+
+    return res.json({ received: true, idempotent: result.idempotent ?? false });
+  } catch (err) {
+    next(err);
+  }
 }

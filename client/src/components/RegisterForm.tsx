@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function RegisterForm() {
   const router = useRouter();
@@ -13,6 +14,8 @@ export default function RegisterForm() {
     email: "",
     password: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(""); // ⬅️ state untuk error
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -20,6 +23,7 @@ export default function RegisterForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage("");
 
     try {
       const response = await fetch(
@@ -30,18 +34,18 @@ export default function RegisterForm() {
           body: JSON.stringify(form),
         }
       );
-      console.log(response);
 
       const data = await response.json();
-      console.log(data, "<< ini masuk datanya");
 
       if (!response.ok) {
-        throw new Error(data.message || "Register failed");
+        setErrorMessage(data?.message || "Register failed. Please try again.");
+        return;
       }
 
       router.push("/login");
     } catch (error) {
       console.log("Register error:", error);
+      setErrorMessage("Something went wrong. Please try again later.");
     }
   };
 
@@ -124,22 +128,40 @@ export default function RegisterForm() {
               />
             </div>
 
-            <div>
+            <div className="relative">
               <label className="block text-sm font-base mt-4">Password</label>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 name="password"
                 value={form.password}
                 onChange={handleChange}
-                placeholder="Password"
-                className="w-full mt-3 p-3 border rounded-md focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter password"
+                className="w-full mt-4 p-3 border rounded-md focus:ring-2 focus:ring-blue-500 pr-10"
                 required
+                minLength={6}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-3 top-[52px] text-gray-500 hover:text-gray-700"
+              >
+                {showPassword ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
+              </button>
             </div>
+
+            {/* Error message */}
+            {errorMessage && (
+              <p className="text-red-500 text-sm mt-2">{errorMessage}</p>
+            )}
 
             <button
               type="submit"
-              className="w-full bg-blue-900 mt-3 text-white py-3 rounded-md shadow hover:bg-[#162B60] transition">
+              className="w-full bg-blue-900 mt-3 text-white py-3 rounded-md shadow hover:bg-[#162B60] transition"
+            >
               Sign up
             </button>
           </form>
