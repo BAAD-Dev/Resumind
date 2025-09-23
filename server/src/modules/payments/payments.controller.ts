@@ -10,32 +10,25 @@ import {
 } from "./payments.service.js";
 
 /** POST /payments/create */
-export async function createPayment(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  try {
-    const parsed = CreatePaymentBodySchema.safeParse(req.body);
-    if (!parsed.success) {
-      return res
-        .status(400)
-        .json({ message: "Invalid body", errors: parsed.error.flatten() });
-    }
-    // const user = req.user
-    // const userID = user?.id
-    const TEST_USER_ID = "68d215bbe76694c4f2253f91";
-    const { orderId, amount, customerName, customerEmail, customerPhone } =
-      parsed.data;
+export async function createPayment(req: Request, res: Response, next: NextFunction) {
+    try {
+        const parsed = CreatePaymentBodySchema.safeParse(req.body);
+        if (!parsed.success) {
+            return res.status(400).json({ message: "Invalid body", errors: parsed.error.flatten() });
+        }
+        const user = req.user!
+        const userId = user?.id
 
-    const result = await createPaymentFlow({
-      userId: TEST_USER_ID,
-      orderId,
-      amount,
-      ...(customerName !== undefined && { customerName }),
-      ...(customerEmail !== undefined && { customerEmail }),
-      ...(customerPhone !== undefined && { customerPhone }),
-    });
+        const { orderId, amount, customerName, customerEmail, customerPhone } = parsed.data;
+
+        const result = await createPaymentFlow({
+            userId,
+            orderId,
+            amount,
+            ...(customerName !== undefined && { customerName }),
+            ...(customerEmail !== undefined && { customerEmail }),
+            ...(customerPhone !== undefined && { customerPhone }),
+        });
 
     return res.status(201).json(result);
   } catch (err: any) {
