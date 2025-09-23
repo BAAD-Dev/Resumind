@@ -4,10 +4,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function LoginForm() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -98,6 +100,7 @@ export default function LoginForm() {
           </Link>
           <h1 className="text-4xl font-semibold mb-8 text-center">Login</h1>
 
+          {/* Email */}
           <form className="space-y-5" onSubmit={handleSubmit}>
             <div>
               <label className="block text-sm font-base">Email</label>
@@ -110,15 +113,26 @@ export default function LoginForm() {
               />
             </div>
 
-            <div>
+            {/* Password */}
+            <div className="relative">
               <label className="block text-sm font-base mt-4">Password</label>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 name="password"
-                placeholder="Password"
-                className="w-full mt-3 p-3 border rounded-md focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter password"
+                className="w-full mt-4 p-3 border rounded-md focus:ring-2 focus:ring-blue-500 pr-10"
                 required
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-3 top-[52px] text-gray-500 hover:text-gray-700">
+                {showPassword ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
+              </button>
             </div>
 
             {error && (

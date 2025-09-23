@@ -35,7 +35,11 @@ export default async function NavbarServer() {
       console.error("Failed to fetch user:", err);
     }
   }
-  console.log(userName);
+  // console.log(userName);
 
-  return <Navbar isLoggedIn={isLoggedIn} userName={userName} role={role} />;
+  return (
+    <>
+      <Navbar isLoggedIn={isLoggedIn} userName={userName} role={role} />
+    </>
+  );
 }

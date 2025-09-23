@@ -70,8 +70,8 @@ class AuthService {
     const token = createToken({
       id: user.id,
       username: user.username,
-      email: user.email,
       name: user.name,
+      email: user.email,
     });
     return token;
   }

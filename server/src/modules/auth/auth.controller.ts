@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from "express";
 import AuthService from "./auth.service.js";
 import { registerSchema, loginSchema } from "./auth.types.js";
 import authService from "./auth.service.js";
+import { env } from "../../config/env.js";
 
 class AuthController {
   async register(req: Request, res: Response, next: NextFunction) {
@@ -32,7 +33,7 @@ class AuthController {
     }
   }
 
-  async userById(req: Request, res: Response, next: NextFunction) {
+  async getUserById(req: Request, res: Response, next: NextFunction) {
     try {
       const user = req.user!;
 
@@ -55,7 +56,7 @@ class AuthController {
 
       // In a real app, you would redirect to your frontend's login page
       // For now, we'll send a success message.
-      res.status(200).json(result);
+      return res.redirect(`${env.frontendUrl}/login?verified=true`);
     } catch (err) {
       next(err);
     }

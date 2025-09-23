@@ -21,7 +21,7 @@ export default function Features() {
               Store your CV securely and let AI keep track of{" "}
               <span className="text-yellow-400">multiple versions</span>.
             </p>
-            <ul className="text-gray-400 space-y-2 list-disc list-inside text-left">
+            <ul className="text-white space-y-2 list-disc list-inside text-left mt-6">
               <li>Upload and manage CV history</li>
               <li>AI feedback on every update</li>
               <li>Save versions for different jobs</li>
@@ -38,10 +38,10 @@ export default function Features() {
               AI refines your CV into an{" "}
               <span className="text-blue-400">ATS-friendly</span> format.
             </p>
-            <ul className="text-gray-400 space-y-2 list-disc list-inside text-left">
-              <li>Clean one-column layout</li>
+            <ul className="text-white space-y-2 list-disc list-inside text-left mt-6">
+              <li>Overall CV Score</li>
               <li>Auto-generated keywords</li>
-              <li>PDF ready to send</li>
+              <li>Section breakdown detail</li>
             </ul>
           </div>
 
@@ -55,10 +55,10 @@ export default function Features() {
               Paste a job description link and get your{" "}
               <span className="text-green-400">match score</span>.
             </p>
-            <ul className="text-gray-400 space-y-2 list-disc list-inside text-left">
+            <ul className="text-white space-y-2 list-disc list-inside text-left mt-6">
               <li>AI-powered match percentage</li>
-              <li>Skill-by-skill breakdown</li>
               <li>Improvement suggestions</li>
+              <li>Suggested edits on CV</li>
             </ul>
           </div>
         </div>

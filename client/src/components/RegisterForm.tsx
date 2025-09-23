@@ -27,6 +27,8 @@ function toMessage(err: unknown, fallback = "Terjadi kesalahan") {
   return fallback;
 }
 
+import { Eye, EyeOff } from "lucide-react";
+
 export default function RegisterForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -36,6 +38,7 @@ export default function RegisterForm() {
     email: "",
     password: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target as HTMLInputElement & {
@@ -161,18 +164,29 @@ export default function RegisterForm() {
               />
             </div>
 
-            <div>
+            <div className="relative">
               <label className="block text-sm font-base mt-4">Password</label>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 name="password"
                 value={form.password}
                 onChange={handleChange}
-                placeholder="Password"
-                className="w-full mt-3 p-3 border rounded-md focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter password"
+                className="w-full mt-4 p-3 border rounded-md focus:ring-2 focus:ring-blue-500 pr-10"
                 required
                 minLength={6}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-3 top-[52px] text-gray-500 hover:text-gray-700"
+              >
+                {showPassword ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
+              </button>
             </div>
 
             <button
