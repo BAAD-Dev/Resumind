@@ -1,5 +1,6 @@
 import "server-only";
 import { cookies } from "next/headers";
+import { toast } from "react-toastify";
 
 export async function requestAnalysis(cvId: string) {
     const token = (await cookies()).get("token")?.value;

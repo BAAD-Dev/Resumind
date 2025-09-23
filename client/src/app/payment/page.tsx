@@ -5,10 +5,12 @@ import { cookies } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+// ====== CONFIG ======
 const PREMIUM_PRICE = 29999;
 const BACKEND_BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:8000";
 
+// (Opsional) helper format rupiah
 function formatIDR(amount: number) {
   return new Intl.NumberFormat("id-ID", {
     style: "currency",

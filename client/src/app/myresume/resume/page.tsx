@@ -3,7 +3,7 @@ import { CVItem, getCVs } from "./data";
 import { uploadCV } from "./action";
 import CVlist from "@/components/resume/CVCard";
 
-export const dynamic = "force-dynamic"; // optional: biar tidak di-cache
+export const dynamic = "force-dynamic";
 
 export default async function ResumePage({
   searchParams,
