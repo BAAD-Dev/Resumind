@@ -34,15 +34,30 @@ class AuthController {
 
   async userById(req: Request, res: Response, next: NextFunction) {
     try {
-      const user = req.user!
+      const user = req.user!;
 
-      const dataUser = await authService.userById(user.id)
+      const dataUser = await authService.userById(user.id);
 
       res.status(200).json({
-        dataUser
-      })
+        dataUser,
+      });
     } catch (err) {
-      next(err)
+      next(err);
+    }
+  }
+
+  async verifyEmail(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { token } = req.params;
+      if (!token)
+        throw new Error("Unique token not found", { cause: { status: 400 } });
+      const result = await AuthService.verifyUserEmail(token);
+
+      // In a real app, you would redirect to your frontend's login page
+      // For now, we'll send a success message.
+      res.status(200).json(result);
+    } catch (err) {
+      next(err);
     }
   }
 }

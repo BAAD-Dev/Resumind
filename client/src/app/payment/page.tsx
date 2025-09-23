@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
 
 const CheckIcon = ({ className }: { className: string }) => (
   <svg
@@ -10,7 +9,8 @@ const CheckIcon = ({ className }: { className: string }) => (
     viewBox="0 0 20 20"
     fill="currentColor"
     className={className}
-    aria-hidden="true">
+    aria-hidden="true"
+  >
     <path
       fillRule="evenodd"
       d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.052-.143z"
@@ -102,7 +102,8 @@ export default function Pricing() {
     <>
       <div
         id="price"
-        className="relative isolate bg-muted px-6 py-10 sm:py-20 lg:px-8">
+        className="relative isolate bg-muted px-6 py-10 sm:py-20 lg:px-8"
+      >
         <div className="mx-auto max-w-4xl text-center">
           <p className="mt-2 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
             One Payment Away from Premium
@@ -132,10 +133,12 @@ export default function Pricing() {
                     ? "rounded-t-3xl sm:rounded-b-none lg:rounded-tr-none lg:rounded-bl-3xl"
                     : "sm:rounded-t-none lg:rounded-tr-3xl lg:rounded-bl-none",
                   "relative rounded-3xl p-8 sm:p-10 transition-all duration-300"
-                )}>
+                )}
+              >
                 <h3
                   id={tier.id}
-                  className="text-base font-semibold leading-7 text-white">
+                  className="text-base font-semibold leading-7 text-white"
+                >
                   {tier.name}
                 </h3>
                 <p className="mt-4 flex items-baseline gap-x-2">
@@ -148,7 +151,8 @@ export default function Pricing() {
                 </p>
                 <ul
                   role="list"
-                  className="mt-8 space-y-3 text-sm leading-6 text-blue-100 sm:mt-10">
+                  className="mt-8 space-y-3 text-sm leading-6 text-blue-100 sm:mt-10"
+                >
                   {tier.features.map((feature) => (
                     <li key={feature} className="flex gap-x-3">
                       <CheckIcon className="h-6 w-5 flex-none text-white" />
@@ -167,7 +171,8 @@ export default function Pricing() {
                         ? "bg-white text-blue-600 shadow-sm hover:bg-blue-50"
                         : "bg-blue-900/50 text-white hover:bg-blue-900/70",
                       "mt-8 block w-full rounded-md px-3.5 py-2.5 text-center text-sm font-semibold transition-colors duration-300"
-                    )}>
+                    )}
+                  >
                     {loading ? "Processing..." : "Upgrade Now"}
                   </button>
                 ) : (
@@ -179,7 +184,8 @@ export default function Pricing() {
                         ? "bg-white text-blue-600 shadow-sm hover:bg-blue-50"
                         : "bg-blue-900/50 text-white hover:bg-blue-900/70",
                       "mt-8 block rounded-md px-3.5 py-2.5 text-center text-sm font-semibold transition-colors duration-300"
-                    )}>
+                    )}
+                  >
                     Get started free
                   </Link>
                 )}

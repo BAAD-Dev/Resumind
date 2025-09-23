@@ -8,9 +8,10 @@ import { LogoutHandler } from "./Logout";
 type NavbarProps = {
   isLoggedIn: boolean;
   userName?: string;
+  role?: string;
 };
 
-export default function Navbar({ isLoggedIn, userName }: NavbarProps) {
+export default function Navbar({ isLoggedIn, userName, role }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const handleLinkClick = () => setIsOpen(false);
 
@@ -20,7 +21,7 @@ export default function Navbar({ isLoggedIn, userName }: NavbarProps) {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <Link href="/" className="flex items-center">
+            <Link href="/" className="flex items-center cursor-pointer">
               <Image
                 src="/resumind_new.png"
                 alt="Resumind Logo"
@@ -60,11 +61,14 @@ export default function Navbar({ isLoggedIn, userName }: NavbarProps) {
                   My Resume
                 </Link>
 
-                <Link
-                  href="/payment"
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-full shadow-sm transition">
-                  Upgrade Plan
-                </Link>
+                {/* Payment */}
+                {role === "FREE" && (
+                  <Link
+                    href="/payment"
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-full shadow-sm transition">
+                    Upgrade Plan
+                  </Link>
+                )}
 
                 {/* Separator */}
                 <div className="border-l border-gray-300 h-7"></div>
