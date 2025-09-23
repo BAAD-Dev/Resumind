@@ -16,8 +16,12 @@ export default function DeleteJobButton({
   async function onDelete() {
     try {
       await deleteJobAction(jobId, currentCvId);
-    } catch (err: any) {
-      toast.error(err?.message || "Gagal menghapus job");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        toast.error(err.message);
+      } else {
+        toast.error("Failed to delete job");
+      }
     }
   }
 

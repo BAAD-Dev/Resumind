@@ -5,6 +5,12 @@ import { cookies } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+type PaymentResponse = {
+  message?: string;
+  redirect_url?: string;
+  token?: string;
+};
+
 // ====== CONFIG ======
 const PREMIUM_PRICE = 29999;
 const BACKEND_BASE_URL =
@@ -44,9 +50,9 @@ async function upgradeAction() {
     cache: "no-store",
   });
 
-  let data: any = null;
+  let data: PaymentResponse | null = null;
   try {
-    data = await res.json();
+    data = (await res.json()) as PaymentResponse;
   } catch {}
 
   if (!res.ok) {
