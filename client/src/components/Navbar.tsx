@@ -7,9 +7,11 @@ import { LogoutHandler } from "./Logout";
 
 type NavbarProps = {
   isLoggedIn: boolean;
+  userName?: string;
+  role?: string;
 };
 
-export default function Navbar({ isLoggedIn }: NavbarProps) {
+export default function Navbar({ isLoggedIn, userName, role }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const handleLinkClick = () => setIsOpen(false);
 
@@ -19,9 +21,9 @@ export default function Navbar({ isLoggedIn }: NavbarProps) {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <Link href="/" className="flex items-center">
+            <Link href="/" className="flex items-center cursor-pointer">
               <Image
-                src="/logo-trans.png"
+                src="/resumind_new.png"
                 alt="Resumind Logo"
                 width={150}
                 height={40}
@@ -52,45 +54,61 @@ export default function Navbar({ isLoggedIn }: NavbarProps) {
           {/* Menu kanan */}
           <div className="hidden md:flex items-center gap-4">
             {isLoggedIn && (
-              <Link
-                href="/myresume"
-                className="text-gray-600 hover:text-blue-800">
-                My Resume
-              </Link>
+              <>
+                <Link
+                  href="/myresume"
+                  className="text-gray-600 hover:text-blue-800">
+                  My Resume
+                </Link>
+
+                {/* Payment */}
+                {role === "FREE" && (
+                  <Link
+                    href="/payment"
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-full shadow-sm transition">
+                    Upgrade Plan
+                  </Link>
+                )}
+
+                {/* Separator */}
+                <div className="border-l border-gray-300 h-7"></div>
+
+                {/* Nama user */}
+                {userName && (
+                  <span className="text-gray-700 font-medium capitalize">
+                    Hi, {userName}
+                  </span>
+                )}
+
+                <form action={LogoutHandler}>
+                  <button
+                    type="submit"
+                    className="cursor-pointer p-2 rounded-full hover:bg-gray-100 transition"
+                    title="Logout">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={2}
+                      stroke="currentColor"
+                      className="w-6 h-6 text-gray-600">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M15.75 9V5.25A2.25 2.25 0 
+                        0013.5 3h-6A2.25 2.25 0 
+                        005.25 5.25v13.5A2.25 2.25 
+                        0 007.5 21h6a2.25 2.25 0 
+                        002.25-2.25V15m3 0l3-3m0 
+                        0l-3-3m3 3H9"
+                      />
+                    </svg>
+                  </button>
+                </form>
+              </>
             )}
 
-            {isLoggedIn && (
-              <Link
-                href="/payment"
-                className="text-gray-600 hover:text-blue-800">
-                Plan
-              </Link>
-            )}
-
-            {isLoggedIn ? (
-              <form action={LogoutHandler}>
-                <button
-                  type="submit"
-                  className=" cursor-pointer p-2 rounded-full hover:bg-gray-100 transition"
-                  title="Logout">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={2}
-                    stroke="currentColor"
-                    className="w-6 h-6 text-gray-600">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6A2.25 2.25 0 
-                  005.25 5.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 
-                  002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"
-                    />
-                  </svg>
-                </button>
-              </form>
-            ) : (
+            {!isLoggedIn && (
               <Link
                 href="/login"
                 className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">

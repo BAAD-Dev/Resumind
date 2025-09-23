@@ -4,7 +4,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/server.js",
-    "dev": "nodemon --watch src --exec \"node --loader ts-node/esm src/server.ts\""
+    "dev": "nodemon --watch src --exec \"tsx src/server.ts\""
   },
   "type": "module",
   "keywords": [],

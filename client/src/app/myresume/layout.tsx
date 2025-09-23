@@ -1,6 +1,7 @@
 import NavbarServer from "@/components/NavbarServer";
 import Link from "next/link";
 import React from "react";
+import { User, FileText, Briefcase, Route } from "lucide-react";
 
 export default function SidebarLayout({
   children,
@@ -8,35 +9,47 @@ export default function SidebarLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
-      <NavbarServer />
-      <div className="flex min-h-screen bg-gray-50">
-        {/* Sidebar */}
-        <aside className="w-64 bg-white shadow-md flex flex-col justify-between">
-          <div>
-            <nav className="mt-6 space-y-2">
-              <Link
-                href="/myresume/profile"
-                className={`block px-6 py-2 text-gray-700 hover:bg-blue-100 hover:text-blue-900 rounded-md`}>
-                Profile
-              </Link>
-              <Link
-                href="/myresume/resume"
-                className={`block px-6 py-2 text-gray-700 hover:bg-blue-100 hover:text-blue-900 rounded-md`}>
-                Resume
-              </Link>
-              <Link
-                href="/myresume/job-matcher"
-                className="block px-6 py-2 text-gray-700 hover:bg-blue-100 hover:text-blue-900 rounded-md">
-                Job Matcher
-              </Link>
-            </nav>
-          </div>
+    <div className="min-h-screen bg-gray-50">
+      <div className="sticky top-0 z-50">
+        <NavbarServer />
+      </div>
+
+      <div className="flex">
+        <aside className="sticky top-20 w-64 h-[calc(100vh-5rem)] bg-[#162B60] shadow-md flex flex-col">
+          <nav className="mt-6 space-y-1">
+            <Link
+              href="/myresume/profile"
+              className="flex items-center gap-3 px-6 py-3 text-white hover:bg-gray-50 hover:text-blue-900 rounded-md transition">
+              <User className="w-5 h-5" />
+              <span>Profile</span>
+            </Link>
+
+            <Link
+              href="/myresume"
+              className="flex items-center gap-3 px-6 py-3 text-white hover:bg-gray-50 hover:text-blue-900 rounded-md transition">
+              <Route className="w-5 h-5" />
+              <span>Journey</span>
+            </Link>
+
+            <Link
+              href="/myresume/resume"
+              className="flex items-center gap-3 px-6 py-3 text-white hover:bg-gray-50 hover:text-blue-900 rounded-md transition">
+              <FileText className="w-5 h-5" />
+              <span>Resume</span>
+            </Link>
+
+            <Link
+              href="/myresume/job-matcher"
+              className="flex items-center gap-3 px-6 py-3 text-white hover:bg-gray-50 hover:text-blue-900 rounded-md transition">
+              <Briefcase className="w-5 h-5" />
+              <span>Job Matcher</span>
+            </Link>
+          </nav>
         </aside>
 
         {/* Main content */}
-        <div className="flex-1 flex flex-col">{children}</div>
+        <main className="flex-1 p-6">{children}</main>
       </div>
-    </>
+    </div>
   );
 }
