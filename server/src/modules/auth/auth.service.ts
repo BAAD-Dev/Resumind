@@ -72,6 +72,7 @@ class AuthService {
       username: user.username,
       name: user.name,
       email: user.email,
+      name: user.name,
     });
     return token;
   }
