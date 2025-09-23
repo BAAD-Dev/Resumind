@@ -18,6 +18,7 @@ export default async function AnalyzePage() {
           cache: "no-store",
         }
       );
+
       if (res.ok) {
         const data = await res.json();
         user = data.dataUser;

@@ -9,6 +9,8 @@ import {
   pickLatestJobMatch,
 } from "./data";
 import AutoRefresher from "@/components/analysis/analysisCVAutoRefresher";
+import AnalyzeFormClient from "@/components/jobMatcher/AnalyzeFormClient";
+import DeleteJobButton from "@/components/jobMatcher/DeleteJobButton";
 
 export default async function JobMatcherPage({
   searchParams,
@@ -31,7 +33,6 @@ export default async function JobMatcherPage({
   return (
     <div className="flex min-h-screen bg-gray-50">
       <main className="flex-1 p-6 space-y-6">
-        {/* Evaluate with Job Posting */}
         <div className="bg-white shadow rounded-xl p-6">
           <h2 className="text-lg font-semibold mb-4">
             Evaluate with Job Posting
@@ -40,88 +41,11 @@ export default async function JobMatcherPage({
           {waiting ? (
             <WaitingPanel />
           ) : (
-            <form action={analyzeJobMatchAction} className="space-y-4">
-              {/* Select CV */}
-              <div>
-                <label className="block text-sm font-medium mb-1">
-                  Select CV
-                </label>
-                <select
-                  name="cvId"
-                  defaultValue={selectedCvId}
-                  className="w-full border rounded-md p-2"
-                  required
-                >
-                  {!selectedCvId && (
-                    <option value="">— Choose your CV —</option>
-                  )}
-                  {cvs.map((cv) => (
-                    <option key={cv.id} value={cv.id}>
-                      {cv.originalName} · {formatDate(cv.createdAt)}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Choose existing Job OR paste a new one */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                {/* Existing Job */}
-                <div className="rounded-xl border p-4">
-                  <div className="text-sm font-medium mb-2">
-                    Use a Saved Job
-                  </div>
-                  <select name="jobId" className="w-full border rounded-md p-2">
-                    <option value="">— Select a saved job —</option>
-                    {jobs.map((job) => (
-                      <option key={job.id} value={job.id}>
-                        {job.title}
-                        {job.company ? ` · ${job.company}` : ""} ·{" "}
-                        {formatDate(job.createdAt)}
-                      </option>
-                    ))}
-                  </select>
-                  <p className="text-xs text-slate-500 mt-1">
-                    If you select a saved job, you can leave the “Paste job
-                    posting” box empty.
-                  </p>
-                </div>
-
-                {/* Paste new Job */}
-                <div className="rounded-xl border p-4">
-                  <div className="text-sm font-medium mb-2">
-                    Or paste a new Job Posting
-                  </div>
-                  <textarea
-                    name="jobText"
-                    rows={6}
-                    placeholder="Paste the job description here…"
-                    className="w-full border rounded-md p-3 focus:ring-2 focus:ring-blue-500"
-                  />
-                  <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <input
-                      name="jobTitle"
-                      placeholder="Job Title (optional)"
-                      className="w-full border rounded-md p-2"
-                    />
-                    <input
-                      name="jobCompany"
-                      placeholder="Company (optional)"
-                      className="w-full border rounded-md p-2"
-                    />
-                  </div>
-                  <p className="text-xs text-slate-500 mt-1">
-                    We’ll save this as a new Job for future use.
-                  </p>
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                className="mt-2 px-6 py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 transition"
-              >
-                Evaluate Job Posting
-              </button>
-            </form>
+            <AnalyzeFormClient
+              cvs={cvs}
+              jobs={jobs}
+              selectedCvId={selectedCvId}
+            />
           )}
         </div>
 
@@ -161,9 +85,10 @@ export default async function JobMatcherPage({
                       await deleteJobAction(job.id, selectedCvId);
                     }}
                   >
-                    <button className="text-sm rounded-md border px-3 py-1.5 hover:bg-slate-50">
-                      Delete
-                    </button>
+                    <DeleteJobButton
+                      jobId={job.id}
+                      currentCvId={selectedCvId}
+                    />
                   </form>
                 </div>
               ))}
