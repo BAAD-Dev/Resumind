@@ -9,6 +9,7 @@ export default async function NavbarServer() {
 
   let isLoggedIn = false;
   let userName = "";
+  let role = "";
 
   if (token) {
     isLoggedIn = true;
@@ -28,11 +29,12 @@ export default async function NavbarServer() {
       if (response.ok) {
         const data = await response.json();
         userName = data?.dataUser.name;
+        role = data?.dataUser.role;
       }
     } catch (err) {
       console.error("Failed to fetch user:", err);
     }
   }
 
-  return <Navbar isLoggedIn={isLoggedIn} userName={userName} />;
+  return <Navbar isLoggedIn={isLoggedIn} userName={userName} role={role} />;
 }
