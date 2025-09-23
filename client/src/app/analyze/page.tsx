@@ -2,8 +2,11 @@
 
 import React, { useState, useCallback, useRef } from "react";
 import { useDropzone } from "react-dropzone";
-import { ArrowUpTrayIcon, XMarkIcon, InformationCircleIcon, StarIcon } from "@heroicons/react/24/solid";
+import { ArrowUpTrayIcon, XMarkIcon, InformationCircleIcon, StarIcon, ArrowLeftIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
+import Image from "next/image";
+import Swal from "sweetalert2";
+import "animate.css";
 
 const PRIMARY_BLUE = "#162B60";
 const PREMIUM_GOLD = "#FFD700";
@@ -53,11 +56,21 @@ export default function AnalyzePage() {
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const pdfFiles = acceptedFiles.filter((f) => f.type === "application/pdf");
     if (acceptedFiles.length > 1 || pdfFiles.length > 1) {
-      alert("Only one PDF file is allowed.");
+      Swal.fire({
+        icon: "error",
+        title: "Only one PDF file is allowed.",
+        showClass: { popup: "animate__animated animate__fadeInUp animate__faster" },
+        hideClass: { popup: "animate__animated animate__fadeOutDown animate__faster" }
+      });
       return;
     }
     if (pdfFiles.length === 0) {
-      alert("Only PDF files are permitted.");
+      Swal.fire({
+        icon: "error",
+        title: "Only PDF files are permitted.",
+        showClass: { popup: "animate__animated animate__fadeInUp animate__faster" },
+        hideClass: { popup: "animate__animated animate__fadeOutDown animate__faster" }
+      });
       return;
     }
     setFile(pdfFiles[0]);
@@ -85,15 +98,32 @@ export default function AnalyzePage() {
 
   const handleAnalyze = async () => {
     if (!file) {
-      alert("Please upload a PDF file first.");
+      Swal.fire({
+        icon: "error",
+        title: "Please upload a PDF file first.",
+        showClass: { popup: "animate__animated animate__fadeInUp animate__faster" },
+        hideClass: { popup: "animate__animated animate__fadeOutDown animate__faster" }
+      });
       return;
     }
     if (file.type !== "application/pdf") {
+      Swal.fire({
+        icon: "error",
+        title: "Only PDF files are allowed.",
+        showClass: { popup: "animate__animated animate__fadeInUp animate__faster" },
+        hideClass: { popup: "animate__animated animate__fadeOutDown animate__faster" }
+      });
       setStatus("error");
       setErrorMessage("Only PDF files are allowed.");
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
+      Swal.fire({
+        icon: "error",
+        title: "Maximum file size is 5MB.",
+        showClass: { popup: "animate__animated animate__fadeInUp animate__faster" },
+        hideClass: { popup: "animate__animated animate__fadeOutDown animate__faster" }
+      });
       setStatus("error");
       setErrorMessage("Maximum file size is 5MB.");
       return;
@@ -117,6 +147,12 @@ export default function AnalyzePage() {
 
       if (!res.ok) {
         const text = await res.text().catch(() => "");
+        Swal.fire({
+          icon: "error",
+          title: text || `Upload failed (${res.status})`,
+          showClass: { popup: "animate__animated animate__fadeInUp animate__faster" },
+          hideClass: { popup: "animate__animated animate__fadeOutDown animate__faster" }
+        });
         throw new Error(text || `Upload failed (${res.status})`);
       }
       const data = (await res.json()) as AnalyzeResponse;
@@ -124,6 +160,12 @@ export default function AnalyzePage() {
       setStatus("success");
       setShowResult(true);
     } catch (err: any) {
+      Swal.fire({
+        icon: "error",
+        title: err?.message || "An error occurred during upload/analysis.",
+        showClass: { popup: "animate__animated animate__fadeInUp animate__faster" },
+        hideClass: { popup: "animate__animated animate__fadeOutDown animate__faster" }
+      });
       setStatus("error");
       setErrorMessage(
         err?.message || "An error occurred during upload/analysis."
@@ -133,13 +175,27 @@ export default function AnalyzePage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 font-sans px-2 sm:px-4">
-      <div className="w-full max-w-xl bg-white rounded-xl shadow-xl p-4 sm:p-8" style={{border:`1px solid ${PRIMARY_BLUE}`}}>
+      <div className="w-full max-w-xl bg-white rounded-xl shadow-xl p-2 sm:p-4">
         {/* Header */}
-        <div className="mb-6 text-center">
-          <h1 className="text-2xl sm:text-3xl font-bold" style={{color: PRIMARY_BLUE}}>
-            LOGO
-          </h1>
-          <p className="text-gray-700 mt-2 text-sm sm:text-base">Get AI-powered insights and improve your resume for the right job!</p>
+       <div className="relative w-full max-w-xl bg-white rounded-xl shadow-xl p-2 sm:p-4">
+          {/* Back Button - absolute top left */}
+          <Link href="/" className="absolute top-4 left-4 z-10">
+            <button className="p-2 rounded hover:bg-gray-100 transition-colors flex items-center">
+              <ArrowLeftIcon className="h-5 w-5 text-gray-700" />
+            </button>
+          </Link>
+
+          <div className="mb-4 flex flex-col items-center justify-center">
+            <Image
+              src="/new.png"
+              alt="resumind_logo"
+              width={150}
+              height={30}
+              className="object-contain mb-1"
+              priority
+            />
+            <p className="text-gray-700 mt-1 text-sm sm:text-base text-center">Get AI-powered insights and improve your resume for the right job!</p>
+          </div>
         </div>
 
         {/* Blue Section */}
