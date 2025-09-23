@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
 
 const CheckIcon = ({ className }: { className: string }) => (
   <svg
