@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
 
 class EmailService {
   async sendVerification(to: string, name: string, token: string) {
-    const verificationUrl = `http://localhost:3000/api/auth/verify/${token}`; //Change this later in production, frontend URL later on
+    const verificationUrl = `http://localhost:${env.port}/api/auth/verify/${token}`; //Change this later in production, frontend URL later on
 
     const mailOptions = {
       from: '"Resumind Team" <noreply.resumind@gmail.com>',
@@ -55,8 +55,8 @@ class EmailService {
           <ul>
             <li><strong>Order ID:</strong> ${order.orderId}</li>
             <li><strong>Date of Payment:</strong> ${order.paidAt.toLocaleDateString(
-              "en-GB"
-            )}</li>
+        "en-GB"
+      )}</li>
             <li><strong>Total Amount:</strong> ${formattedAmount}</li>
             <li><strong>Plan:</strong> Resumind Premium (Lifetime Access)</li>
           </ul>

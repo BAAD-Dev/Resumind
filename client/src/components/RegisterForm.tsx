@@ -4,10 +4,33 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+type FormState = {
+  name: string;
+  username: string;
+  email: string;
+  password: string;
+};
+
+type ApiResp =
+  | { message?: string } // success
+  | { message?: string; error?: string }; // error shape (jaga-jaga)
+
+function toMessage(err: unknown, fallback = "Terjadi kesalahan") {
+  if (typeof err === "string") return err;
+  if (err && typeof err === "object" && "message" in err) {
+    const m = (err as { message?: unknown }).message;
+    if (typeof m === "string") return m;
+  }
+  return fallback;
+}
 
 export default function RegisterForm() {
   const router = useRouter();
-  const [form, setForm] = useState({
+  const [loading, setLoading] = useState(false);
+  const [form, setForm] = useState<FormState>({
     name: "",
     username: "",
     email: "",
@@ -15,14 +38,18 @@ export default function RegisterForm() {
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target as HTMLInputElement & {
+      name: keyof FormState;
+    };
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
-      const response = await fetch(
+      const res = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/register`,
         {
           method: "POST",
@@ -31,15 +58,27 @@ export default function RegisterForm() {
         }
       );
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Register failed");
+      let data: ApiResp | undefined;
+      try {
+        data = (await res.json()) as ApiResp;
+      } catch {
+        data = undefined;
       }
 
+      if (!res.ok) {
+        const msg =
+          (data?.message || (data as any)?.error) ??
+          `Register failed (${res.status})`;
+        throw new Error(msg);
+      }
+
+      toast.success(data?.message || "Register berhasil. Silakan login.");
       router.push("/login");
-    } catch (error) {
-      console.log("Register error:", error);
+    } catch (err: unknown) {
+      toast.error(toMessage(err, "Register gagal. Coba lagi."));
+      console.error("Register error:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -152,6 +191,18 @@ export default function RegisterForm() {
           </p>
         </div>
       </div>
+      <ToastContainer
+        position="bottom-left"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </div>
   );
 }
