@@ -143,7 +143,8 @@ export default function RegisterForm() {
               <button
                 type="button"
                 onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute right-3 top-[52px] text-gray-500 hover:text-gray-700">
+                className="absolute right-3 top-[52px] text-gray-500 hover:text-gray-700"
+              >
                 {showPassword ? (
                   <EyeOff className="w-5 h-5" />
                 ) : (
@@ -159,7 +160,8 @@ export default function RegisterForm() {
 
             <button
               type="submit"
-              className="w-full bg-blue-900 mt-3 text-white py-3 rounded-md shadow hover:bg-[#162B60] transition">
+              className="w-full bg-blue-900 mt-3 text-white py-3 rounded-md shadow hover:bg-[#162B60] transition"
+            >
               Sign up
             </button>
           </form>
