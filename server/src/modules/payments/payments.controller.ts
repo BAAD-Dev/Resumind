@@ -1,6 +1,13 @@
 import type { Request, Response, NextFunction } from "express";
-import { CreatePaymentBodySchema, type MidtransWebhookBody } from "./payments.types.js";
-import { createPaymentFlow, handleMidtransWebhook, verifyMidtransSignature } from "./payments.service.js";
+import {
+  CreatePaymentBodySchema,
+  type MidtransWebhookBody,
+} from "./payments.types.js";
+import {
+  createPaymentFlow,
+  handleMidtransWebhook,
+  verifyMidtransSignature,
+} from "./payments.service.js";
 
 /** POST /payments/create */
 export async function createPayment(req: Request, res: Response, next: NextFunction) {
@@ -23,27 +30,31 @@ export async function createPayment(req: Request, res: Response, next: NextFunct
             ...(customerPhone !== undefined && { customerPhone }),
         });
 
-        return res.status(201).json(result);
-    } catch (err: any) {
-        if (err?.message === "MIDTRANS_CREATE_FAILED") {
-            return res.status(400).json({ message: "Failed to create Midtrans transaction" });
-        }
-        next(err);
+    return res.status(201).json(result);
+  } catch (err: any) {
+    if (err?.message === "MIDTRANS_CREATE_FAILED") {
+      return res
+        .status(400)
+        .json({ message: "Failed to create Midtrans transaction" });
     }
+    next(err);
+  }
 }
 
 /** POST /payments/webhook */
 export async function midtransWebhook(req: Request, res: Response) {
-    const body = req.body as MidtransWebhookBody;
+  const body = req.body as MidtransWebhookBody;
 
-    if (!verifyMidtransSignature(body)) {
-        return res.status(403).json({ message: "Invalid signature" });
-    }
+  if (!verifyMidtransSignature(body)) {
+    return res.status(403).json({ message: "Invalid signature" });
+  }
 
-    const result = await handleMidtransWebhook(body);
-    if (!result.ok) {
-        return res.status(400).json({ message: "Webhook error", reason: result.reason });
-    }
+  const result = await handleMidtransWebhook(body);
+  if (!result.ok) {
+    return res
+      .status(400)
+      .json({ message: "Webhook error", reason: result.reason });
+  }
 
-    return res.json({ received: true, idempotent: result.idempotent ?? false });
+  return res.json({ received: true, idempotent: result.idempotent ?? false });
 }
