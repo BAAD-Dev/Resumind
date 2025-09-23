@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import { formatDate } from "@/lib/format";
-import { analyzeJobMatchAction, deleteJobAction } from "./action";
+import { deleteJobAction } from "./action";
 import {
   getCVs,
   getUserJobs,
@@ -68,8 +68,7 @@ export default async function JobMatcherPage({
               {jobs.map((job) => (
                 <div
                   key={job.id}
-                  className="flex items-center justify-between rounded-lg border p-4"
-                >
+                  className="flex items-center justify-between rounded-lg border p-4">
                   <div className="min-w-0">
                     <div className="font-medium truncate">
                       {job.title}
@@ -83,8 +82,7 @@ export default async function JobMatcherPage({
                     action={async () => {
                       "use server";
                       await deleteJobAction(job.id, selectedCvId);
-                    }}
-                  >
+                    }}>
                     <DeleteJobButton
                       jobId={job.id}
                       currentCvId={selectedCvId}
@@ -201,8 +199,7 @@ function JobMatchHistory({ analyses }: { analyses: any[] }) {
           {items.map((a) => (
             <div
               key={a.id}
-              className="flex items-center justify-between rounded-lg border p-4 bg-white"
-            >
+              className="flex items-center justify-between rounded-lg border p-4 bg-white">
               <div className="min-w-0">
                 <div className="text-sm font-medium">
                   {a.status === "COMPLETED" ? "Completed" : a.status}

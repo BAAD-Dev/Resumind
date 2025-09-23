@@ -1,34 +1,34 @@
 export const dynamic = "force-dynamic";
 
 import { formatDate } from "@/lib/format";
-import { analyzeJobMatchAction, deleteJobAction } from "../action"; // sesuaikan jika path beda
+import { deleteJobAction } from "../action"; // sesuaikan jika path beda
 import {
   getCVs,
   getUserJobs,
   getAnalysesForCV,
   pickLatestJobMatch,
 } from "../data";
-import AutoRefresher from "@/components/analysis/analysisCVAutoRefresher";
+// import AutoRefresher from "@/components/analysis/analysisCVAutoRefresher";
 
 export default async function JobMatcherPage({
   params,
-  searchParams,
-}: {
+}: // searchParams,
+{
   params: { cvId: string };
-  searchParams?: Record<string, string | string[] | undefined>;
+  // searchParams?: Record<string, string | string[] | undefined>;
 }) {
   const [cvs, jobs] = await Promise.all([getCVs(), getUserJobs()]);
 
   const selectedCvId = params.cvId || cvs[0]?.id || "";
-  const init = Boolean(searchParams?.init);
+  // const init = Boolean(searchParams?.init);
 
   const analyses = selectedCvId ? await getAnalysesForCV(selectedCvId) : [];
   const latestJobMatch = pickLatestJobMatch(analyses);
 
-  const waiting =
-    selectedCvId &&
-    init &&
-    (!latestJobMatch || latestJobMatch.status?.toUpperCase() !== "COMPLETED");
+  // const waiting =
+  //   selectedCvId &&
+  //   init &&
+  //   (!latestJobMatch || latestJobMatch.status?.toUpperCase() !== "COMPLETED");
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -52,8 +52,7 @@ export default async function JobMatcherPage({
               {jobs.map((job) => (
                 <div
                   key={job.id}
-                  className="flex items-center justify-between rounded-lg border p-4"
-                >
+                  className="flex items-center justify-between rounded-lg border p-4">
                   <div className="min-w-0">
                     <div className="font-medium truncate">
                       {job.title}
@@ -67,8 +66,7 @@ export default async function JobMatcherPage({
                     action={async () => {
                       "use server";
                       await deleteJobAction(job.id, selectedCvId);
-                    }}
-                  >
+                    }}>
                     <button className="text-sm rounded-md border px-3 py-1.5 hover:bg-slate-50">
                       Delete
                     </button>
@@ -90,30 +88,30 @@ export default async function JobMatcherPage({
 
 /* ===== Small UI helpers ===== */
 
-function WaitingPanel() {
-  return (
-    <div className="rounded-xl border bg-white p-6 text-center">
-      <div className="relative mx-auto h-20 w-20">
-        <div
-          className="h-20 w-20 rounded-full"
-          style={{ background: `conic-gradient(#2563eb 120deg, #e5e7eb 0deg)` }}
-        />
-        <div className="absolute inset-2 rounded-full bg-white flex items-center justify-center shadow-sm">
-          <div className="h-6 w-6 animate-spin rounded-full border-2 border-slate-300 border-t-blue-600" />
-        </div>
-      </div>
-      <h3 className="mt-4 text-lg font-semibold">
-        Running <span className="text-blue-600">Job Match Analysis</span>
-      </h3>
-      <p className="text-slate-600 mt-1">
-        This may take a short while. The page will refresh automatically.
-      </p>
-      <div className="mt-4">
-        <AutoRefresher intervalMs={3000} />
-      </div>
-    </div>
-  );
-}
+// function WaitingPanel() {
+//   return (
+//     <div className="rounded-xl border bg-white p-6 text-center">
+//       <div className="relative mx-auto h-20 w-20">
+//         <div
+//           className="h-20 w-20 rounded-full"
+//           style={{ background: `conic-gradient(#2563eb 120deg, #e5e7eb 0deg)` }}
+//         />
+//         <div className="absolute inset-2 rounded-full bg-white flex items-center justify-center shadow-sm">
+//           <div className="h-6 w-6 animate-spin rounded-full border-2 border-slate-300 border-t-blue-600" />
+//         </div>
+//       </div>
+//       <h3 className="mt-4 text-lg font-semibold">
+//         Running <span className="text-blue-600">Job Match Analysis</span>
+//       </h3>
+//       <p className="text-slate-600 mt-1">
+//         This may take a short while. The page will refresh automatically.
+//       </p>
+//       <div className="mt-4">
+//         <AutoRefresher intervalMs={3000} />
+//       </div>
+//     </div>
+//   );
+// }
 
 /** ===========================
  * COMPONENT: JobMatchResult
@@ -257,8 +255,7 @@ function KeywordCard({
             key={k}
             className={`px-2 py-1 text-xs rounded ${
               badgeClass ?? "bg-gray-200"
-            }`}
-          >
+            }`}>
             {k}
           </span>
         ))}
@@ -306,8 +303,7 @@ function JobMatchHistory({ analyses }: { analyses: any[] }) {
           {items.map((a) => (
             <div
               key={a.id}
-              className="flex items-center justify-between rounded-lg border p-4 bg-white"
-            >
+              className="flex items-center justify-between rounded-lg border p-4 bg-white">
               <div className="min-w-0">
                 <div className="text-sm font-medium">
                   {a.status === "COMPLETED" ? "Completed" : a.status}

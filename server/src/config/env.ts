@@ -17,6 +17,7 @@ const required = [
   "SMTP_PORT",
   "SMTP_USER",
   "SMTP_PASS",
+  "FRONTEND_URL",
 ];
 for (const k of required) {
   if (!process.env[k]) throw new Error(`Missing env var: ${k}`);
@@ -27,6 +28,7 @@ export const env = {
 
   jwtSecret: process.env.JWT_SECRET!,
   geminiApiKey: process.env.GEMINI_API_KEY!,
+  frontendUrl: process.env.FRONTEND_URL!,
 
   cloudinary: {
     cloudName: process.env.CLOUDINARY_CLOUD_NAME!,

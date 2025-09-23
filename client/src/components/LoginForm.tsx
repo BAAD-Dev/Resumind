@@ -40,8 +40,12 @@ export default function LoginForm() {
 
       router.push("/");
       router.refresh();
-    } catch (error: any) {
-      setError(error.message || "Something went wrong");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("Something went wrong");
+      }
     }
   };
 
