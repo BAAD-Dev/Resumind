@@ -1,57 +1,102 @@
-"use client";
-import { useState } from "react";
+"use server";
 
-export default function ProfilePage() {
-  const [user] = useState({
-    name: "Test",
-    email: "test@mail.com",
-    role: "Software Engineer",
-  });
+import { cookies } from "next/headers";
+
+export default async function ProfilePage() {
+  const cookieStorage = await cookies();
+  const tokenCookie = cookieStorage.get("token");
+  const token = tokenCookie?.value;
+
+  if (!token) {
+    return (
+      <div className="p-6">
+        <p>
+          Please{" "}
+          <a href="/login" className="text-blue-600 underline">
+            login
+          </a>
+          .
+        </p>
+      </div>
+    );
+  }
+
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/userLogin`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      cache: "no-store",
+    }
+  );
+
+  if (!response.ok) {
+    console.error("Failed fetch user", await response.text());
+    return <div className="p-6">No User</div>;
+  }
+
+  const data = await response.json();
+  const user = data.dataUser;
+
+  function formatJoinedDate(createdAt: string) {
+    const date = new Date(createdAt);
+    return new Intl.DateTimeFormat("en-US", {
+      month: "short",
+      year: "numeric",
+    }).format(date);
+  }
+
+  const userInitial = user?.name ? user.name.charAt(0).toUpperCase() : "U";
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col">
-        {/* Profile content */}
-        <main className="flex-1 p-6 flex justify-center items-start">
-          <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-lg relative">
-            {/* Edit Button */}
-            <button className="absolute top-4 right-4 text-sm px-3 py-1 border rounded-md hover:bg-gray-100 transition">
-              Edit
-            </button>
-
-            {/* Profile Picture */}
-            <div className="flex justify-center">
-              <div className="w-28 h-28 rounded-full bg-gray-300 flex items-center justify-center text-4xl">
-                👤
+    <>
+      <div className="min-h-screen py-12 px-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-white shadow-lg rounded-xl p-10 flex items-start gap-10">
+            {/* Avatar */}
+            <div className="flex-shrink-0">
+              <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center text-4xl font-semibold text-gray-600">
+                {userInitial}
               </div>
             </div>
 
             {/* User Info */}
-            <div className="mt-6 text-center space-y-2">
-              <h2 className="text-2xl font-semibold">{user.name}</h2>
-              <p className="text-gray-600">{user.email}</p>
-              <p className="text-gray-500">{user.role}</p>
-            </div>
+            <div className="flex-1">
+              {/* Basic Info */}
+              <h2 className="text-3xl font-bold text-gray-800">{user?.name}</h2>
+              <p className="text-gray-500 mt-3 font-base">{user?.email}</p>
 
-            {/* Extra Info */}
-            <div className="mt-6 border-t pt-6 space-y-3 text-sm text-gray-700">
-              <div className="flex justify-between">
-                <span>Plan</span>
-                <span className="font-medium">Free Tier</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Joined</span>
-                <span className="font-medium">Sep 2025</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Status</span>
-                <span className="font-medium text-green-600">Active</span>
+              {/* Divider */}
+              <div className="border-t mt-6 pt-6 grid grid-cols-2 gap-6">
+                {/* Plan */}
+                <div>
+                  <span className="text-sm mx-1.5 text-gray-500 block">
+                    Plan
+                  </span>
+                  <span
+                    className={`inline-block mt-2 px-4 py-1 text-sm font-semibold rounded-full ${
+                      user?.role === "FREE"
+                        ? "bg-red-100 text-red-600"
+                        : "bg-green-100 text-green-600"
+                    }`}>
+                    {user?.role}
+                  </span>
+                </div>
+
+                {/* Joined */}
+                <div>
+                  <span className="text-sm text-gray-500 block">Joined</span>
+                  <span className="mt-2 block font-medium text-gray-800">
+                    {user?.createdAt ? formatJoinedDate(user.createdAt) : "-"}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
-        </main>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
