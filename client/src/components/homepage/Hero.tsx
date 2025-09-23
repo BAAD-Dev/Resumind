@@ -1,8 +1,15 @@
+"use server";
+
 import Image from "next/image";
 import resumeIllustration from "../../../public/image/heroillus.png";
 import Link from "next/link";
+import { cookies } from "next/headers";
 
-const Hero = () => {
+export default async function Hero() {
+  const cookieStorage = await cookies();
+  const token = cookieStorage.get("token");
+  const isLoggedIn = !!token;
+
   return (
     <section className="pt-24 pb-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -22,12 +29,21 @@ const Hero = () => {
               >
                 Analyze Resume With AI
               </Link>
-              <Link
-                href="/register"
-                className="bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg text-lg"
-              >
-                Register Now
-              </Link>
+
+              {/* Kalau login → My Resume, kalau belum → Register Now */}
+              {isLoggedIn ? (
+                <Link
+                  href="/myresume/resume"
+                  className="bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg text-lg">
+                  My Resume
+                </Link>
+              ) : (
+                <Link
+                  href="/register"
+                  className="bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg text-lg">
+                  Register Now
+                </Link>
+              )}
             </div>
             <div className="mt-6 text-slate-500 text-sm">
               <p className="inline-flex items-center">
@@ -59,6 +75,4 @@ const Hero = () => {
       </div>
     </section>
   );
-};
-
-export default Hero;
+}
