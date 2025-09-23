@@ -15,9 +15,20 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/", req.url));
   }
 
+  if (
+    !token &&
+    (pathname.startsWith("/myresume") ||
+      pathname.startsWith("/myresume/profile") ||
+      pathname.startsWith("/myresume/resume") ||
+      pathname.startsWith("/myresume/job-matcher") ||
+      pathname.startsWith("/payment"))
+  ) {
+    return NextResponse.redirect(new URL("/login", req.url));
+  }
+
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/login", "/register"],
+  matcher: ["/login", "/register", "/myresume/:path*", "/payment"],
 };

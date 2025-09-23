@@ -15,6 +15,7 @@ export default function RegisterForm() {
     password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(""); // ⬅️ state untuk error
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -22,6 +23,7 @@ export default function RegisterForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage("");
 
     try {
       const response = await fetch(
@@ -36,12 +38,14 @@ export default function RegisterForm() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Register failed");
+        setErrorMessage(data?.message || "Register failed. Please try again.");
+        return;
       }
 
       router.push("/login");
     } catch (error) {
       console.log("Register error:", error);
+      setErrorMessage("Something went wrong. Please try again later.");
     }
   };
 
@@ -147,6 +151,11 @@ export default function RegisterForm() {
                 )}
               </button>
             </div>
+
+            {/* Error message */}
+            {errorMessage && (
+              <p className="text-red-500 text-sm mt-2">{errorMessage}</p>
+            )}
 
             <button
               type="submit"
