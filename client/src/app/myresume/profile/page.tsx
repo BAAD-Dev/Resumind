@@ -87,28 +87,12 @@ export default async function ProfilePage() {
                 </span>
               </div>
 
-              <div className="border-t mt-6 pt-6 grid grid-cols-2 gap-6 max-w-xs mx-auto md:mx-0">
-                {/* Plan */}
-                <div>
-                  <span className="text-sm mx-1.5 text-gray-500 block">
-                    Plan
-                  </span>
-                  <span
-                    className={`inline-block mt-2 px-4 py-1 text-sm font-semibold rounded-full ${
-                      user?.role === "FREE"
-                        ? "bg-red-100 text-red-600"
-                        : "bg-green-100 text-green-600"
-                    }`}>
-                    {user?.role}
-                  </span>
-                </div>
-                {/* Joined */}
-                <div>
-                  <span className="text-sm text-gray-500 block">Joined</span>
-                  <span className="mt-2 block font-medium text-gray-800">
-                    {user?.createdAt ? formatJoinedDate(user.createdAt) : "-"}
-                  </span>
-                </div>
+              {/* Joined */}
+              <div>
+                <span className="text-sm text-gray-500 block">Joined</span>
+                <span className="mt-2 block font-medium text-gray-800">
+                  {user?.createdAt ? formatJoinedDate(user.createdAt) : "-"}
+                </span>
               </div>
             </div>
           </div>

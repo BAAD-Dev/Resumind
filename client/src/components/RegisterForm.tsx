@@ -4,55 +4,29 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-
-type FormState = {
-  name: string;
-  username: string;
-  email: string;
-  password: string;
-};
-
-type ApiResp =
-  | { message?: string } // success
-  | { message?: string; error?: string }; // error shape (jaga-jaga)
-
-function toMessage(err: unknown, fallback = "Terjadi kesalahan") {
-  if (typeof err === "string") return err;
-  if (err && typeof err === "object" && "message" in err) {
-    const m = (err as { message?: unknown }).message;
-    if (typeof m === "string") return m;
-  }
-  return fallback;
-}
-
 import { Eye, EyeOff } from "lucide-react";
 
 export default function RegisterForm() {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [form, setForm] = useState<FormState>({
+  const [form, setForm] = useState({
     name: "",
     username: "",
     email: "",
     password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(""); // ⬅️ state untuk error
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target as HTMLInputElement & {
-      name: keyof FormState;
-    };
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    setErrorMessage("");
 
     try {
-      const res = await fetch(
+      const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/register`,
         {
           method: "POST",
@@ -61,27 +35,17 @@ export default function RegisterForm() {
         }
       );
 
-      let data: ApiResp | undefined;
-      try {
-        data = (await res.json()) as ApiResp;
-      } catch {
-        data = undefined;
+      const data = await response.json();
+
+      if (!response.ok) {
+        setErrorMessage(data?.message || "Register failed. Please try again.");
+        return;
       }
 
-      if (!res.ok) {
-        const msg =
-          (data?.message || (data as any)?.error) ??
-          `Register failed (${res.status})`;
-        throw new Error(msg);
-      }
-
-      toast.success(data?.message || "Register berhasil. Silakan login.");
       router.push("/login");
-    } catch (err: unknown) {
-      toast.error(toMessage(err, "Register gagal. Coba lagi."));
-      console.error("Register error:", err);
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      console.log("Register error:", error);
+      setErrorMessage("Something went wrong. Please try again later.");
     }
   };
 
@@ -189,6 +153,11 @@ export default function RegisterForm() {
               </button>
             </div>
 
+            {/* Error message */}
+            {errorMessage && (
+              <p className="text-red-500 text-sm mt-2">{errorMessage}</p>
+            )}
+
             <button
               type="submit"
               className="w-full bg-blue-900 mt-3 text-white py-3 rounded-md shadow hover:bg-[#162B60] transition"
@@ -205,18 +174,6 @@ export default function RegisterForm() {
           </p>
         </div>
       </div>
-      <ToastContainer
-        position="bottom-left"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick={false}
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
     </div>
   );
 }

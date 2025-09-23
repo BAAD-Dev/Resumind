@@ -244,7 +244,7 @@ export default function AnalyzePage({ user }: Props) {
         <div className="relative w-full max-w-xl bg-white rounded-xl shadow-xl p-2 sm:p-4">
           {/* Back Button - absolute top left */}
           <Link href="/" className="absolute top-4 left-4 z-10">
-            <button className="p-2 rounded hover:bg-gray-100 transition-colors flex items-center">
+            <button className="p-2 cursor-pointer rounded hover:bg-gray-100 transition-colors flex items-center">
               <ArrowLeftIcon className="h-5 w-5 text-gray-700" />
             </button>
           </Link>
@@ -373,8 +373,7 @@ export default function AnalyzePage({ user }: Props) {
             {status === "uploading" ? "Analyzing..." : "Analyze Now"}
           </button>
 
-          {/* tombol premium cuma muncul pas role user FREE */}
-          {(!user || user.role === "FREE") && (
+          {!user && (
             <Link href="/register" className="w-full">
               <button
                 className="cursor-pointer w-full font-bold py-3 px-4 sm:px-6 rounded-lg text-base sm:text-lg flex items-center justify-center gap-2 border"
