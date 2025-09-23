@@ -56,14 +56,18 @@ class AuthService {
 
   async userById(id: string) {
     const userById = await prisma.user.findUnique({
-      omit: {
-        password: true,
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        username: true,
+        email: true,
+        role: true,
         createdAt: true,
-        updatedAt: true
-      }, where: { id }
-    })
+      },
+    });
 
-    return userById
+    return userById;
   }
 }
 
