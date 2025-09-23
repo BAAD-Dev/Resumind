@@ -15,27 +15,40 @@ const snap = new midtransClient.Snap({
   serverKey: env.midtrans.serverKey,
   clientKey: env.midtrans.clientKey,
 });
+
 type SnapTxParams = Parameters<typeof snap.createTransaction>[0];
 type CustomerDetails = { first_name?: string; email?: string; phone?: string };
 type SnapTxParamsExtended = SnapTxParams & {
   customer_details?: CustomerDetails;
+  callbacks?: {
+    finish: string;
+  };
 };
 
 export async function createSnapTransaction(
   p: CreateSnapParams
 ): Promise<SnapCreateTransactionResult> {
   const parameter: SnapTxParamsExtended = {
-    transaction_details: { order_id: p.orderId, gross_amount: p.amount },
+    transaction_details: {
+      order_id: p.orderId,
+      gross_amount: p.amount,
+    },
+    callbacks: {
+      finish: `${env.frontendUrl}/myresume`,
+    },
   };
+
   if (p.customerName || p.customerEmail || p.customerPhone) {
     parameter.customer_details = {};
     if (p.customerName) parameter.customer_details.first_name = p.customerName;
     if (p.customerEmail) parameter.customer_details.email = p.customerEmail;
     if (p.customerPhone) parameter.customer_details.phone = p.customerPhone;
   }
+
   const tx = await snap.createTransaction(parameter);
   return { token: tx.token, redirect_url: tx.redirect_url };
 }
+
 export function verifyMidtransSignature(body: MidtransWebhookBody): boolean {
   const raw =
     body.order_id +

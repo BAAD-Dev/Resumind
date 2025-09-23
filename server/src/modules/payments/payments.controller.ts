@@ -8,8 +8,8 @@ import {
 import type { MidtransWebhookBody } from "./payments.types.js";
 
 // We define the price for the premium plan here on the backend for security.
-const PREMIUM_PLAN_PRICE = 29999; // e.g., Rp 50,000
 
+const PREMIUM_PLAN_PRICE = 29999; // e.g., Rp 29,999
 /** POST /payments/create */
 export async function createPayment(
   req: Request,
