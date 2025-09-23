@@ -29,25 +29,25 @@ const reviews = [
   },
   {
     quote: "Resumind helped me create a professional resume and I received more interview calls than ever before.",
-    name: "Fathan Mania Mantap",
+    name: "Fathan Al Mujahid",
     title: "Marketing Specialist",
     avatar: "https://images.pexels.com/photos/256522/pexels-photo-256522.jpeg",
   },
   {
     quote: "The actionable feedback made my resume stand out. I landed a job at a major tech company faster than I expected.",
-    name: "Faqihihi",
+    name: "Faqih Azizy",
     title: "Product Manager",
     avatar: "https://images.pexels.com/photos/91227/pexels-photo-91227.jpeg",
   },
   {
     quote: "The ATS analysis was a game changer for me. Now my resume always passes the initial screening stage.",
-    name: "Axel Excel",
+    name: "Rafael Axel F.",
     title: "Software Engineer",
     avatar: "https://images.pexels.com/photos/39866/entrepreneur-startup-start-up-man-39866.jpeg?_gl=1*1htybee*_ga*MTU0MTI1NTEwLjE3NTU2Njg0NDA.*_ga_8JE65Q40S6*czE3NTg1MjkyOTYkbzEwJGcxJHQxNzU4NTI5NzEwJGoyNCRsMCRoMA..",
   },
   {
     quote: "Applying for jobs became so much easier with Resumind. The tips are relevant for various positions.",
-    name: "Intan Permata",
+    name: "Intan Nur R.",
     title: "Data Analyst",
     avatar: "https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?_gl=1*1ijh2rb*_ga*MTU0MTI1NTEwLjE3NTU2Njg0NDA.*_ga_8JE65Q40S6*czE3NTg1MjkyOTYkbzEwJGcxJHQxNzU4NTI5Nzk2JGoyOCRsMCRoMA..",
   }

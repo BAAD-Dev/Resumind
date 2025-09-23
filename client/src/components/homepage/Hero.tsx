@@ -18,7 +18,7 @@ const Hero = () => {
                             <Link href="/analyze" className="bg-[#162B60] hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-lg">
                                 Analyze Resume With AI
                             </Link>
-                            <Link href="/register" className="bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg text-lg">
+                            <Link href="/register" className="bg-gray-400 hover:bg-gray-500 text-white font-bold py-3 px-6 rounded-lg text-lg">
                                 Register Now
                             </Link>
                         </div>
