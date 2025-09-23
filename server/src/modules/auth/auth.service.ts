@@ -6,6 +6,9 @@ import { randomUUID } from "crypto";
 import EmailService from "../../services/email.js";
 
 class AuthService {
+  userById(id: string) {
+    throw new Error("Method not implemented.");
+  }
   async registerUser(userData: RegisterUserInput) {
     const { name, username, email, password } = userData;
 
