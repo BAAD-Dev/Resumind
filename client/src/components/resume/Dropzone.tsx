@@ -1,6 +1,3 @@
-// app/myresume/resume/UploadDropzone.tsx
-// Client component: drag & drop uploader that calls a Server Action passed via props
-
 "use client";
 
 import React, {
@@ -11,6 +8,7 @@ import React, {
   useTransition,
 } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 export type UploadResult = { ok: boolean; message?: string } | void;
 
@@ -80,6 +78,7 @@ export default function UploadDropzone({
     if (!f) return;
     const err = validate(f);
     if (err) {
+      toast.error(err);
       setMessage(`❌ ${err}`);
       return;
     }
@@ -123,6 +122,7 @@ export default function UploadDropzone({
 
     const err = validate(chosen);
     if (err) {
+      toast.error(err);
       setMessage(`❌ ${err}`);
       return;
     }
@@ -134,18 +134,18 @@ export default function UploadDropzone({
         const res = await action(fd);
         if (res && typeof res === "object" && "ok" in res) {
           if (res.ok) {
-            setMessage("✅ Upload berhasil");
+            toast.success("upload success");
             clear();
             router.refresh();
           } else {
-            setMessage(`❌ ${res.message ?? "Upload gagal"}`);
+            toast.error(`${res.message} Upload Failed`);
           }
         } else {
         }
       } catch (e: unknown) {
         if (isNextRedirectError(e)) return;
         const msg = getErrorMessage(e) || "Terjadi kesalahan saat upload";
-        setMessage(`❌ ${msg}`);
+        toast.error(msg);
       }
     });
   };
@@ -172,54 +172,84 @@ export default function UploadDropzone({
         aria-busy={isPending}
         aria-label="Dropzone unggah file"
       >
-        {/* Shimmer */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl">
           <div className="absolute -inset-x-20 -top-1/2 h-full rotate-12 bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
         </div>
 
         <div className="flex flex-col items-center text-center gap-3">
-          <svg
-            width="40"
-            height="40"
-            viewBox="0 0 24 24"
-            fill="none"
-            className="opacity-80"
-          >
-            <path
-              d="M12 16V4m0 0 4 4m-4-4-4 4"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M20 16v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          {!file ? (
+            // === Empty State ===
 
-          <div className="text-base sm:text-lg font-medium">
-            Tarik & letakkan file di sini
-          </div>
-          <div className="text-xs sm:text-sm text-slate-500">
-            atau klik untuk memilih (maks {maxSizeMB}MB)
-          </div>
+            <div className="flex flex-col items-center justify-center text-center space-y-1">
+              <svg
+                width="40"
+                height="40"
+                viewBox="0 0 24 24"
+                fill="none"
+                className="opacity-80"
+              >
+                <path
+                  d="M12 16V4m0 0 4 4m-4-4-4 4"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M20 16v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              <div className="text-base sm:text-lg font-medium">
+                Tarik & letakkan file di sini
+              </div>
+              <div className="text-xs sm:text-sm text-slate-500">
+                atau klik untuk memilih (maks {maxSizeMB}MB)
+              </div>
+            </div>
+          ) : (
+            // === File State ===
+            <div className="mt-2 flex items-center gap-3 rounded-lg border border-slate-200 bg-white p-3 shadow-sm">
+              {/* Icon dokumen */}
+              <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-md bg-slate-100">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6 text-slate-500"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={1.5}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 4v16m8-8H4"
+                  />
+                </svg>
+              </div>
 
-          {file && (
-            <div className="mt-1 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs text-slate-700">
-              <span className="truncate max-w-[220px]" title={file.name}>
-                {file.name}
-              </span>
+              {/* Nama file */}
+              <div className="flex-1 min-w-0">
+                <p
+                  className="text-sm font-medium text-slate-700 truncate"
+                  title={file.name}
+                >
+                  {file.name}
+                </p>
+                <p className="text-xs text-slate-500">Dokumen terpilih</p>
+              </div>
+
+              {/* Tombol hapus */}
               <button
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
                   clear();
                 }}
-                className="rounded-full px-2 py-0.5 text-slate-500 hover:bg-slate-100"
+                className="rounded-full p-1 text-slate-500 hover:bg-slate-100"
                 aria-label="Hapus file terpilih"
               >
                 ×

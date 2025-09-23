@@ -1,6 +1,7 @@
 "use client";
+
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const CheckIcon = ({ className }: { className: string }) => (
   <svg
@@ -21,31 +22,24 @@ const tiers = [
   {
     name: "Free Plan",
     id: "tier-free",
-    href: "#",
     priceMonthly: "Rp.0",
     description:
       "The perfect plan if you're just getting started with resume analysis.",
-    features: [
-      "1x Resume Analysis per day",
-      "Basic ATS Score",
-      "Limited Resume Templates",
-      "Basic Keyword Analysis",
-    ],
+    features: ["Basic ATS Score", "Basic Keyword Analysis", "Simple Feedback"],
   },
   {
     name: "Premium Plan",
     id: "tier-premium",
-    href: "#",
     priceMonthly: "Rp.29.999",
     description:
       "Dedicated support and unlimited analysis for serious job seekers.",
     features: [
       "Unlimited Resume Analyses",
       "In-depth ATS Score & Feedback",
-      "All Premium Templates",
-      "Job Description Analysis",
+      "Job Description Matching & Scoring",
       "AI Keyword Suggestions",
-      "Priority Support",
+      "Strengths and improvement areas highlighted",
+      "And more...",
     ],
   },
 ];
@@ -56,6 +50,17 @@ function classNames(...classes: (string | boolean)[]) {
 
 export default function Pricing() {
   const [hoveredPlan, setHoveredPlan] = useState("Premium Plan");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // cek token di cookies/localStorage
+  useEffect(() => {
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("token="));
+    if (token) {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   return (
     <div
@@ -99,9 +104,6 @@ export default function Pricing() {
                 <span className="text-5xl font-bold tracking-tight text-white">
                   {tier.priceMonthly}
                 </span>
-                {tier.name === "Premium Plan" && (
-                  <span className="text-base text-blue-200">/month</span>
-                )}
               </p>
               <p className="mt-6 text-base leading-7 text-blue-100">
                 {tier.description}
@@ -117,7 +119,7 @@ export default function Pricing() {
                 ))}
               </ul>
               <Link
-                href="/login"
+                href={isLoggedIn ? "/myresume/resume" : "/login"}
                 aria-describedby={tier.id}
                 className={classNames(
                   isHovered
