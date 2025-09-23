@@ -8,7 +8,7 @@ import {
 import type { MidtransWebhookBody } from "./payments.types.js";
 
 // We define the price for the premium plan here on the backend for security.
-const PREMIUM_PLAN_PRICE = 50000; // e.g., Rp 50,000
+const PREMIUM_PLAN_PRICE = 29999; // e.g., Rp 50,000
 
 /** POST /payments/create */
 export async function createPayment(
@@ -18,8 +18,7 @@ export async function createPayment(
 ) {
   try {
     const user = req.user!; // We get the real, logged-in user from the 'protect' middleware
-    console.log(">>>>>>>>>>.",req.user);
-    
+    console.log(">>>>>>>>>>.", req.user);
 
     // The server generates the unique orderId for security
     const orderId = `RESUMIND-UPGRADE-${user.id.slice(-4)}-${randomUUID().slice(
@@ -67,5 +66,4 @@ export async function midtransWebhook(
   } catch (err) {
     next(err);
   }
-
 }

@@ -48,6 +48,11 @@ export default async function ProfilePage() {
     }).format(date);
   }
 
+  function displayRole(role: string) {
+    if (role === "PAID") return "PREMIUM";
+    return role;
+  }
+
   const userInitial = user?.name ? user.name.charAt(0).toUpperCase() : "U";
 
   return (
@@ -81,7 +86,7 @@ export default async function ProfilePage() {
                         ? "bg-red-100 text-red-600"
                         : "bg-green-100 text-green-600"
                     }`}>
-                    {user?.role}
+                    {displayRole(user?.role)}
                   </span>
                 </div>
 

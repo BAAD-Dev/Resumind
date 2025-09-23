@@ -25,12 +25,11 @@ export default async function Hero() {
             <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
               <Link
                 href="/analyze"
-                className="bg-[#162B60] hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-lg"
-              >
+                className="bg-[#162B60] hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-lg">
                 Analyze Resume With AI
               </Link>
 
-              {/* Kalau login → My Resume, kalau belum → Register Now */}
+              {/* Kalau login -> My Resume, kalau belum -> Register Now */}
               {isLoggedIn ? (
                 <Link
                   href="/myresume/resume"
@@ -50,13 +49,11 @@ export default async function Hero() {
                 <svg
                   className="w-5 h-5 text-green-500 mr-2"
                   fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
+                  viewBox="0 0 20 20">
                   <path
                     fillRule="evenodd"
                     d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                    clipRule="evenodd"
-                  ></path>
+                    clipRule="evenodd"></path>
                 </svg>
                 39% more likely to land the job
               </p>
