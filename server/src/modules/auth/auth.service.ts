@@ -72,12 +72,10 @@ class AuthService {
       username: user.username,
       name: user.name,
       email: user.email,
-      name: user.name,
     });
     return token;
   }
 
-  
   // Renamed for consistency and fixed the duplicate 'where' clause
   async getUserById(id: string) {
     const user = await prisma.user.findUnique({
