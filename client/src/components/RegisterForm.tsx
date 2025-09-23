@@ -33,6 +33,8 @@ export default function RegisterForm() {
 
       const data = await response.json();
 
+      console.log(response);
+
       if (!response.ok) {
         throw new Error(data.message || "Register failed");
       }
@@ -138,7 +140,8 @@ export default function RegisterForm() {
 
             <button
               type="submit"
-              className="w-full bg-blue-900 mt-3 text-white py-3 rounded-md shadow hover:bg-[#162B60] transition">
+              className="w-full bg-blue-900 mt-3 text-white py-3 rounded-md shadow hover:bg-[#162B60] transition"
+            >
               Sign up
             </button>
           </form>

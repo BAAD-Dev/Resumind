@@ -23,30 +23,30 @@ export default function Navbar({ isLoggedIn, userName, role }: NavbarProps) {
           <div className="flex-shrink-0">
             <Link href="/" className="flex items-center cursor-pointer">
               <Image
-                src="/resumind_new.png"
+                src="/logo_new.png"
                 alt="Resumind Logo"
                 width={150}
                 height={40}
-                className="w-auto h-50"
+                className="w-auto h-15"
                 priority
               />
             </Link>
           </div>
 
           {/* Menu tengah */}
-          <div className="hidden md:flex flex-grow justify-center items-center gap-8">
-            <Link href="/" className="text-gray-600 hover:text-blue-800">
+          <div className="hidden md:flex flex-grow font-semibold justify-center items-center gap-8">
+            <Link href="/" className="text-gray-600 hover:text-blue-900">
               Home
             </Link>
-            <Link href="/#about" className="text-gray-600 hover:text-blue-800">
+            <Link href="/#about" className="text-gray-600 hover:text-blue-900">
               About
             </Link>
-            <Link href="/#price" className="text-gray-600 hover:text-blue-800">
+            <Link href="/#price" className="text-gray-600 hover:text-blue-900">
               Price
             </Link>
             <Link
               href="/contacts"
-              className="text-gray-600 hover:text-blue-800">
+              className="text-gray-600 hover:text-blue-900">
               Contacts
             </Link>
           </div>
