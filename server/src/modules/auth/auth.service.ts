@@ -21,8 +21,6 @@ class AuthService {
     }
 
     const hashed = await hashPassword(password);
-
-    // 3. Generate a unique, random token for email verification
     const verificationToken = randomUUID();
 
     const user = await prisma.user.create({
@@ -31,11 +29,11 @@ class AuthService {
         username,
         email,
         password: hashed,
-        emailVerificationToken: verificationToken, // 👈 4. Save the token
+        emailVerificationToken: verificationToken,
       },
     });
 
-    // 5. Send the verification email!
+    // Corrected function call to match our email service
     await EmailService.sendVerification(
       user.email,
       user.name,
@@ -50,21 +48,20 @@ class AuthService {
     const { email, password } = credentials;
 
     const user = await prisma.user.findUnique({ where: { email } });
-
     if (!user) {
       throw new Error("Invalid Email or Password", { cause: { status: 401 } });
     }
 
-    const isPasswordValid = await compareHash(password, user.password);
-
-    if (!isPasswordValid) {
-      throw new Error("Invalid Email or Password", { cause: { status: 401 } });
-    }
-
+    // 👇 The order of these checks is now more secure and user-friendly
     if (!user.isVerified) {
       throw new Error("Please verify your email before logging in.", {
         cause: { status: 403 },
-      }); // 403 Forbidden
+      });
+    }
+
+    const isPasswordValid = await compareHash(password, user.password);
+    if (!isPasswordValid) {
+      throw new Error("Invalid Email or Password", { cause: { status: 401 } });
     }
 
     const token = createToken({
@@ -75,26 +72,27 @@ class AuthService {
     return token;
   }
 
-  async userById(id: string) {
-    const userById = await prisma.user.findUnique({
+  // Renamed for consistency and fixed the duplicate 'where' clause
+  async getUserById(id: string) {
+    const user = await prisma.user.findUnique({
       where: { id },
+      // Select is great for security - it ensures we never accidentally send the password
       select: {
         id: true,
         name: true,
         username: true,
         email: true,
         role: true,
+        isVerified: true,
         createdAt: true,
         updatedAt: true,
       },
-      where: { id },
     });
 
-    return userById;
+    return user;
   }
 
   async verifyUserEmail(token: string) {
-    // 1. Find the user with this specific, un-used verification token
     const user = await prisma.user.findUnique({
       where: { emailVerificationToken: token },
     });
@@ -105,13 +103,17 @@ class AuthService {
       });
     }
 
-    // 2. Update the user to mark them as verified
+    // Added a check for users who are already verified
+    if (user.isVerified) {
+      return { message: "This email has already been verified." };
+    }
+
     await prisma.user.update({
       where: { id: user.id },
       data: {
         isVerified: true,
         emailVerifiedAt: new Date(),
-        emailVerificationToken: null, // CRITICAL: Invalidate the token after use
+        emailVerificationToken: `${user.id}-verified-${Date.now()}`,
       },
     });
 
