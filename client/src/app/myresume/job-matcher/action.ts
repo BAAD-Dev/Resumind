@@ -2,6 +2,7 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { toast } from "react-toastify";
 
 /* =========================
  * Helpers (Auth)
@@ -48,7 +49,6 @@ async function assertPaidUser() {
     }
 
     if (user.role !== "PAID") {
-        // Sudah login tapi FREE -> arahkan ke halaman upgrade
         redirect(`/payment?reason=upgrade_required`);
     }
     return user;

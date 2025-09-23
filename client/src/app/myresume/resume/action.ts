@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
+import { toast } from "react-toastify";
 
 export async function uploadCV(formData: FormData) {
     const cookieStore = await cookies();
@@ -15,6 +16,7 @@ export async function uploadCV(formData: FormData) {
 
     if (!res.ok) {
         const text = await res.text().catch(() => "");
+        toast.error(text)
         return { ok: false, message: text || `Upload failed: ${res.status}` } as const;
     }
 
