@@ -11,7 +11,7 @@ export default function DeleteJobButton({
   jobId: string;
   currentCvId?: string;
 }) {
-  const [pending, startTransition] = useTransition();
+  const [pending] = useTransition();
 
   async function onDelete() {
     try {
@@ -26,8 +26,7 @@ export default function DeleteJobButton({
       type="button"
       onClick={onDelete}
       disabled={pending}
-      className="text-sm rounded-md border px-3 py-1.5 hover:bg-slate-50 disabled:opacity-60"
-    >
+      className="text-sm rounded-md border px-3 py-1.5 hover:bg-slate-50 disabled:opacity-60">
       {pending ? "Deleting..." : "Delete"}
     </button>
   );

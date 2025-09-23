@@ -219,10 +219,15 @@ export default function AnalyzePage({ user }: Props) {
       setResult(data);
       setStatus("success");
       setShowResult(true);
-    } catch (err: any) {
+    } catch (err: unknown) {
+      let message = "An error occurred during upload/analysis.";
+      if (err instanceof Error) {
+        message = err.message;
+      }
+
       Swal.fire({
         icon: "error",
-        title: err?.message || "An error occurred during upload/analysis.",
+        title: message,
         showClass: {
           popup: "animate__animated animate__fadeInUp animate__faster",
         },
@@ -231,9 +236,7 @@ export default function AnalyzePage({ user }: Props) {
         },
       });
       setStatus("error");
-      setErrorMessage(
-        err?.message || "An error occurred during upload/analysis."
-      );
+      setErrorMessage(message);
     }
   };
 

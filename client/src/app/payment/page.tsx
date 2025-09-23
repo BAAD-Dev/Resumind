@@ -1,4 +1,3 @@
-// app/pricing/page.tsx
 export const dynamic = "force-dynamic";
 
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
@@ -12,16 +11,16 @@ const BACKEND_BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:8000";
 
 // (Opsional) helper format rupiah
-function formatIDR(amount: number) {
-  return new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
+// function formatIDR(amount: number) {
+//   return new Intl.NumberFormat("id-ID", {
+//     style: "currency",
+//     currency: "IDR",
+//     maximumFractionDigits: 0,
+//   }).format(amount);
+// }
 
 // ====== SERVER ACTION ======
-async function upgradeAction(_formData: FormData) {
+async function upgradeAction() {
   "use server";
 
   const payload = {
