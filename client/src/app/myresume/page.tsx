@@ -1,6 +1,34 @@
+"use client";
+
+import PremiumModal from "@/components/myResume/Notification";
 import { FileText, BarChart, Upload } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function Features() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const orderId = searchParams.get("order_id") ?? "";
+  const statusCode = searchParams.get("status_code") ?? "";
+  const trxStatus = searchParams.get("transaction_status") ?? "";
+
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (orderId && trxStatus === "settlement" && statusCode === "200") {
+      setOpen(true);
+
+      const url = new URL(window.location.href);
+      url.searchParams.delete("order_id");
+      url.searchParams.delete("status_code");
+      url.searchParams.delete("transaction_status");
+      const cleaned =
+        url.pathname +
+        (url.searchParams.toString() ? `?${url.searchParams.toString()}` : "");
+      router.replace(cleaned, { scroll: false });
+    }
+  }, [orderId, trxStatus, statusCode, router]);
   return (
     <section className="py-10 bg-gray-50">
       <div className="max-w-6xl mx-auto px-6 text-center">
@@ -63,6 +91,11 @@ export default function Features() {
           </div>
         </div>
       </div>
+      <PremiumModal
+        open={open}
+        onClose={() => setOpen(false)}
+        message="User can now access premium feature"
+      />
     </section>
   );
 }

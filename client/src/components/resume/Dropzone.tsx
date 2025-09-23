@@ -62,36 +62,46 @@ export default function UploadDropzone({
     [accept]
   );
 
-  const validate = (f: File): string | null => {
-    if (!f) return "File tidak ditemukan";
-    const sizeOK = f.size <= maxSizeMB * 1024 * 1024;
-    if (!sizeOK) return `Ukuran file melebihi ${maxSizeMB}MB`;
-    const ext = f.name.split(".").pop()?.toLowerCase();
-    if (ext && acceptExts.length && !acceptExts.includes(ext)) {
-      return `Tipe file .${ext} tidak didukung`;
-    }
-    return null;
-  };
+  const validate = useCallback(
+    (f: File): string | null => {
+      if (!f) return "File tidak ditemukan";
+      const sizeOK = f.size <= maxSizeMB * 1024 * 1024;
+      if (!sizeOK) return `Ukuran file melebihi ${maxSizeMB}MB`;
+      const ext = f.name.split(".").pop()?.toLowerCase();
+      if (ext && acceptExts.length && !acceptExts.includes(ext)) {
+        return `Tipe file .${ext} tidak didukung`;
+      }
+      return null;
+    },
+    [maxSizeMB, acceptExts]
+  );
 
-  const onSelect = (f: File | undefined) => {
-    setMessage(null);
-    if (!f) return;
-    const err = validate(f);
-    if (err) {
-      toast.error(err);
-      setMessage(`❌ ${err}`);
-      return;
-    }
-    setFile(f);
-  };
+  const onSelect = useCallback(
+    (f: File | undefined) => {
+      setMessage(null);
+      if (!f) return;
 
-  const onDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(false);
-    const f = e.dataTransfer.files?.[0];
-    onSelect(f);
-  }, []);
+      const err = validate(f);
+      if (err) {
+        toast.error(err);
+        setMessage(`❌ ${err}`);
+        return;
+      }
+      setFile(f);
+    },
+    [validate]
+  );
+
+  const onDrop = useCallback(
+    (e: React.DragEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsDragging(false);
+      const f = e.dataTransfer.files?.[0];
+      onSelect(f);
+    },
+    [onSelect]
+  );
 
   const onDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -170,8 +180,7 @@ export default function UploadDropzone({
           .filter(Boolean)
           .join(" ")}
         aria-busy={isPending}
-        aria-label="Dropzone unggah file"
-      >
+        aria-label="Dropzone unggah file">
         <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl">
           <div className="absolute -inset-x-20 -top-1/2 h-full rotate-12 bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
         </div>
@@ -186,8 +195,7 @@ export default function UploadDropzone({
                 height="40"
                 viewBox="0 0 24 24"
                 fill="none"
-                className="opacity-80"
-              >
+                className="opacity-80">
                 <path
                   d="M12 16V4m0 0 4 4m-4-4-4 4"
                   stroke="currentColor"
@@ -221,8 +229,7 @@ export default function UploadDropzone({
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
-                  strokeWidth={1.5}
-                >
+                  strokeWidth={1.5}>
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -235,8 +242,7 @@ export default function UploadDropzone({
               <div className="flex-1 min-w-0">
                 <p
                   className="text-sm font-medium text-slate-700 truncate"
-                  title={file.name}
-                >
+                  title={file.name}>
                   {file.name}
                 </p>
                 <p className="text-xs text-slate-500">Dokumen terpilih</p>
@@ -250,8 +256,7 @@ export default function UploadDropzone({
                   clear();
                 }}
                 className="rounded-full p-1 text-slate-500 hover:bg-slate-100"
-                aria-label="Hapus file terpilih"
-              >
+                aria-label="Hapus file terpilih">
                 ×
               </button>
             </div>
@@ -273,8 +278,7 @@ export default function UploadDropzone({
                 e.stopPropagation();
                 openPicker();
               }}
-              className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium hover:bg-slate-50"
-            >
+              className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium hover:bg-slate-50">
               Pilih File
             </button>
             <button
@@ -284,8 +288,7 @@ export default function UploadDropzone({
                 handleSubmit();
               }}
               disabled={isPending}
-              className="inline-flex items-center justify-center rounded-lg bg-blue-600 text-white px-4 py-2 text-sm font-medium shadow-sm hover:bg-blue-700 disabled:opacity-60"
-            >
+              className="inline-flex items-center justify-center rounded-lg bg-blue-600 text-white px-4 py-2 text-sm font-medium shadow-sm hover:bg-blue-700 disabled:opacity-60">
               {isPending ? "Uploading…" : buttonText}
             </button>
           </div>
@@ -301,8 +304,7 @@ export default function UploadDropzone({
       {message && (
         <div
           className="rounded-lg border border-slate-200 bg-white text-sm text-slate-700 p-3"
-          aria-live="polite"
-        >
+          aria-live="polite">
           {message}
         </div>
       )}

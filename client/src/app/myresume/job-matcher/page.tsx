@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import { formatDate } from "@/lib/format";
-import { analyzeJobMatchAction, deleteJobAction } from "./action";
+import { deleteJobAction } from "./action";
 import {
   getCVs,
   getUserJobs,
@@ -11,6 +11,20 @@ import {
 import AutoRefresher from "@/components/analysis/analysisCVAutoRefresher";
 import AnalyzeFormClient from "@/components/jobMatcher/AnalyzeFormClient";
 import DeleteJobButton from "@/components/jobMatcher/DeleteJobButton";
+
+type JobMatchResult = {
+  overallScore?: number;
+  summary?: string;
+  actionableNextSteps?: string[];
+};
+
+type JobMatchAnalysis = {
+  id: string;
+  createdAt: string;
+  status: string;
+  type: string;
+  result?: JobMatchResult;
+};
 
 export default async function JobMatcherPage({
   searchParams,
@@ -54,7 +68,7 @@ export default async function JobMatcherPage({
           <div className="bg-white shadow rounded-xl p-6">
             <h2 className="text-lg font-semibold mb-4">Latest Match Result</h2>
             <ResultSummary
-              result={latestJobMatch.result}
+              result={latestJobMatch.result as JobMatchResult}
               when={latestJobMatch.createdAt}
             />
           </div>
@@ -68,8 +82,7 @@ export default async function JobMatcherPage({
               {jobs.map((job) => (
                 <div
                   key={job.id}
-                  className="flex items-center justify-between rounded-lg border p-4"
-                >
+                  className="flex items-center justify-between rounded-lg border p-4">
                   <div className="min-w-0">
                     <div className="font-medium truncate">
                       {job.title}
@@ -83,8 +96,7 @@ export default async function JobMatcherPage({
                     action={async () => {
                       "use server";
                       await deleteJobAction(job.id, selectedCvId);
-                    }}
-                  >
+                    }}>
                     <DeleteJobButton
                       jobId={job.id}
                       currentCvId={selectedCvId}
@@ -99,7 +111,7 @@ export default async function JobMatcherPage({
         </div>
 
         {/* History */}
-        <JobMatchHistory analyses={analyses} />
+        <JobMatchHistory analyses={analyses as JobMatchAnalysis[]} />
       </main>
     </div>
   );
@@ -132,7 +144,13 @@ function WaitingPanel() {
   );
 }
 
-function ResultSummary({ result, when }: { result: any; when: string }) {
+function ResultSummary({
+  result,
+  when,
+}: {
+  result: JobMatchResult;
+  when: string;
+}) {
   const score =
     typeof result?.overallScore === "number"
       ? Math.max(0, Math.min(100, result.overallScore))
@@ -168,23 +186,23 @@ function ResultSummary({ result, when }: { result: any; when: string }) {
         </div>
       )}
 
-      {(result?.actionableNextSteps?.length ?? 0) > 0 && (
+      {result?.actionableNextSteps?.length ? (
         <div className="rounded-lg border bg-slate-50/60 p-4">
           <div className="text-sm font-semibold mb-1">
             Actionable Next Steps
           </div>
           <ul className="list-disc pl-5 text-slate-700">
-            {result.actionableNextSteps.map((s: string, i: number) => (
+            {result.actionableNextSteps!.map((s, i) => (
               <li key={i}>{s}</li>
             ))}
           </ul>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }
 
-function JobMatchHistory({ analyses }: { analyses: any[] }) {
+function JobMatchHistory({ analyses }: { analyses: JobMatchAnalysis[] }) {
   const items = (analyses ?? [])
     .filter((a) => a.type?.toUpperCase() === "JOB_MATCH_ANALYSIS")
     .sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
@@ -201,8 +219,7 @@ function JobMatchHistory({ analyses }: { analyses: any[] }) {
           {items.map((a) => (
             <div
               key={a.id}
-              className="flex items-center justify-between rounded-lg border p-4 bg-white"
-            >
+              className="flex items-center justify-between rounded-lg border p-4 bg-white">
               <div className="min-w-0">
                 <div className="text-sm font-medium">
                   {a.status === "COMPLETED" ? "Completed" : a.status}

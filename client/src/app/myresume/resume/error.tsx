@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 
@@ -12,7 +13,7 @@ export default function Error({
 }) {
   useEffect(() => {
     toast.error(error?.message || "Failed to load CV list");
-  }, []);
+  }, [error]);
 
   return (
     <>
@@ -40,17 +41,15 @@ export default function Error({
           <div className="flex gap-3">
             <button
               onClick={() => reset()}
-              className="px-4 py-2 rounded-md bg-blue-600 text-white"
-            >
+              className="px-4 py-2 rounded-md bg-blue-600 text-white">
               Try Again
             </button>
 
-            <a
+            <Link
               href="/myresume/resume"
-              className="px-4 py-2 rounded-md border border-slate-300 text-slate-700"
-            >
+              className="px-4 py-2 rounded-md border border-slate-300 text-slate-700">
               Reload Page
-            </a>
+            </Link>
           </div>
         </div>
       </main>

@@ -73,7 +73,7 @@ export default function Pricing() {
       </div>
 
       <p className="mx-auto mt-6 max-w-2xl text-center text-lg leading-8 text-gray-600">
-        Choose an affordable plan that's packed with the best features for
+        Choose an affordable plan that&apos;s packed with the best features for
         landing your dream job.
       </p>
 

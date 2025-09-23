@@ -2,14 +2,35 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import { VerifyModal } from "./login/VerifyModal";
 
 export default function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [openVerifyModal, setOpenVerifyModal] = useState(false);
+
+  const verified = useMemo(
+    () => searchParams.get("verified") === "true",
+    [searchParams]
+  );
+
+  useEffect(() => {
+    if (verified) {
+      setOpenVerifyModal(true);
+
+      const url = new URL(window.location.href);
+      url.searchParams.delete("verified");
+      const cleaned =
+        url.pathname +
+        (url.searchParams.toString() ? `?${url.searchParams.toString()}` : "");
+      router.replace(cleaned, { scroll: false });
+    }
+  }, [verified, router]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -40,8 +61,12 @@ export default function LoginForm() {
 
       router.push("/");
       router.refresh();
-    } catch (error: any) {
-      setError(error.message || "Something went wrong");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("Something went wrong");
+      }
     }
   };
 
@@ -83,14 +108,16 @@ export default function LoginForm() {
           {/* Arrow back */}
           <Link
             href="/"
-            className="absolute left-5 top-5 text-gray-600 hover:text-blue-900 transition">
+            className="absolute left-5 top-5 text-gray-600 hover:text-blue-900 transition"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
               strokeWidth="2"
               stroke="black"
-              className="size-6">
+              className="size-6"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -126,7 +153,8 @@ export default function LoginForm() {
               <button
                 type="button"
                 onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute right-3 top-[52px] text-gray-500 hover:text-gray-700">
+                className="absolute right-3 top-[52px] text-gray-500 hover:text-gray-700"
+              >
                 {showPassword ? (
                   <EyeOff className="w-5 h-5" />
                 ) : (
@@ -141,7 +169,8 @@ export default function LoginForm() {
 
             <button
               type="submit"
-              className="cursor-pointer w-full bg-blue-900 mt-3 text-white py-3 rounded-md shadow hover:bg-[#162B60] transition">
+              className="cursor-pointer w-full bg-blue-900 mt-3 text-white py-3 rounded-md shadow hover:bg-[#162B60] transition"
+            >
               Sign in
             </button>
           </form>
@@ -154,6 +183,10 @@ export default function LoginForm() {
           </p>
         </div>
       </div>
+      <VerifyModal
+        open={openVerifyModal}
+        onClose={() => setOpenVerifyModal(false)}
+      />
     </div>
   );
 }

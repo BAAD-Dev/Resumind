@@ -1,34 +1,68 @@
 export const dynamic = "force-dynamic";
 
 import { formatDate } from "@/lib/format";
-import { analyzeJobMatchAction, deleteJobAction } from "../action"; // sesuaikan jika path beda
+import { deleteJobAction } from "../action"; // sesuaikan jika path beda
 import {
   getCVs,
   getUserJobs,
   getAnalysesForCV,
   pickLatestJobMatch,
 } from "../data";
-import AutoRefresher from "@/components/analysis/analysisCVAutoRefresher";
+// import AutoRefresher from "@/components/analysis/analysisCVAutoRefresher";
+
+type SuggestedEdit = {
+  originalCVBullet: string;
+  suggestedRewrite: string;
+};
+
+type KeywordAnalysis = {
+  jobKeywords?: string[];
+  matchedKeywords?: string[];
+  missingKeywords?: string[];
+};
+
+export type JobMatchResult = {
+  matchScore?: number;
+  matchSummary?: string;
+  keywordAnalysis?: KeywordAnalysis;
+  strengths?: string[];
+  improvementAreas?: string[];
+  suggestedEdits?: SuggestedEdit[];
+};
+
+export type JobMatchAnalysis = {
+  id: string;
+  createdAt: string;
+  status: string;
+  type: string;
+  result?: JobMatchResult;
+};
 
 export default async function JobMatcherPage({
   params,
-  searchParams,
-}: {
+}: // searchParams,
+{
   params: { cvId: string };
-  searchParams?: Record<string, string | string[] | undefined>;
+  // searchParams?: Record<string, string | string[] | undefined>;
 }) {
   const [cvs, jobs] = await Promise.all([getCVs(), getUserJobs()]);
 
   const selectedCvId = params.cvId || cvs[0]?.id || "";
-  const init = Boolean(searchParams?.init);
+  // const init = Boolean(searchParams?.init);
 
-  const analyses = selectedCvId ? await getAnalysesForCV(selectedCvId) : [];
+  const analyses = selectedCvId
+    ? (await getAnalysesForCV(selectedCvId)).map((a) => ({
+        ...a,
+        result: a.result as JobMatchResult, // 🔑 casting di sini
+      }))
+    : [];
+
   const latestJobMatch = pickLatestJobMatch(analyses);
 
-  const waiting =
-    selectedCvId &&
-    init &&
-    (!latestJobMatch || latestJobMatch.status?.toUpperCase() !== "COMPLETED");
+  // const waiting =
+  //   selectedCvId &&
+  //   init &&
+  //   (!latestJobMatch || latestJobMatch.status?.toUpperCase() !== "COMPLETED");
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -38,7 +72,7 @@ export default async function JobMatcherPage({
           <div className="bg-white shadow rounded-xl p-6">
             <h2 className="text-lg font-semibold mb-4">Latest Match Result</h2>
             <JobMatchResult
-              result={latestJobMatch.result}
+              result={latestJobMatch.result as JobMatchResult} // ✅ cast di sini
               when={latestJobMatch.createdAt}
             />
           </div>
@@ -52,8 +86,7 @@ export default async function JobMatcherPage({
               {jobs.map((job) => (
                 <div
                   key={job.id}
-                  className="flex items-center justify-between rounded-lg border p-4"
-                >
+                  className="flex items-center justify-between rounded-lg border p-4">
                   <div className="min-w-0">
                     <div className="font-medium truncate">
                       {job.title}
@@ -67,8 +100,7 @@ export default async function JobMatcherPage({
                     action={async () => {
                       "use server";
                       await deleteJobAction(job.id, selectedCvId);
-                    }}
-                  >
+                    }}>
                     <button className="text-sm rounded-md border px-3 py-1.5 hover:bg-slate-50">
                       Delete
                     </button>
@@ -90,35 +122,41 @@ export default async function JobMatcherPage({
 
 /* ===== Small UI helpers ===== */
 
-function WaitingPanel() {
-  return (
-    <div className="rounded-xl border bg-white p-6 text-center">
-      <div className="relative mx-auto h-20 w-20">
-        <div
-          className="h-20 w-20 rounded-full"
-          style={{ background: `conic-gradient(#2563eb 120deg, #e5e7eb 0deg)` }}
-        />
-        <div className="absolute inset-2 rounded-full bg-white flex items-center justify-center shadow-sm">
-          <div className="h-6 w-6 animate-spin rounded-full border-2 border-slate-300 border-t-blue-600" />
-        </div>
-      </div>
-      <h3 className="mt-4 text-lg font-semibold">
-        Running <span className="text-blue-600">Job Match Analysis</span>
-      </h3>
-      <p className="text-slate-600 mt-1">
-        This may take a short while. The page will refresh automatically.
-      </p>
-      <div className="mt-4">
-        <AutoRefresher intervalMs={3000} />
-      </div>
-    </div>
-  );
-}
+// function WaitingPanel() {
+//   return (
+//     <div className="rounded-xl border bg-white p-6 text-center">
+//       <div className="relative mx-auto h-20 w-20">
+//         <div
+//           className="h-20 w-20 rounded-full"
+//           style={{ background: `conic-gradient(#2563eb 120deg, #e5e7eb 0deg)` }}
+//         />
+//         <div className="absolute inset-2 rounded-full bg-white flex items-center justify-center shadow-sm">
+//           <div className="h-6 w-6 animate-spin rounded-full border-2 border-slate-300 border-t-blue-600" />
+//         </div>
+//       </div>
+//       <h3 className="mt-4 text-lg font-semibold">
+//         Running <span className="text-blue-600">Job Match Analysis</span>
+//       </h3>
+//       <p className="text-slate-600 mt-1">
+//         This may take a short while. The page will refresh automatically.
+//       </p>
+//       <div className="mt-4">
+//         <AutoRefresher intervalMs={3000} />
+//       </div>
+//     </div>
+//   );
+// }
 
 /** ===========================
  * COMPONENT: JobMatchResult
  * =========================== */
-function JobMatchResult({ result, when }: { result: any; when: string }) {
+function JobMatchResult({
+  result,
+  when,
+}: {
+  result: JobMatchResult;
+  when: string;
+}) {
   const score =
     typeof result?.matchScore === "number"
       ? Math.max(0, Math.min(100, result.matchScore))
@@ -126,13 +164,11 @@ function JobMatchResult({ result, when }: { result: any; when: string }) {
 
   const summary = result?.matchSummary ?? null;
   const kw = result?.keywordAnalysis ?? {};
-  const strengths: string[] = Array.isArray(result?.strengths)
-    ? result.strengths
-    : [];
-  const improvements: string[] = Array.isArray(result?.improvementAreas)
+  const strengths = Array.isArray(result?.strengths) ? result.strengths : [];
+  const improvements = Array.isArray(result?.improvementAreas)
     ? result.improvementAreas
     : [];
-  const edits: any[] = Array.isArray(result?.suggestedEdits)
+  const edits: SuggestedEdit[] = Array.isArray(result?.suggestedEdits)
     ? result.suggestedEdits
     : [];
 
@@ -257,8 +293,7 @@ function KeywordCard({
             key={k}
             className={`px-2 py-1 text-xs rounded ${
               badgeClass ?? "bg-gray-200"
-            }`}
-          >
+            }`}>
             {k}
           </span>
         ))}
@@ -289,7 +324,7 @@ function BulletCard({
   );
 }
 
-function JobMatchHistory({ analyses }: { analyses: any[] }) {
+function JobMatchHistory({ analyses }: { analyses: JobMatchAnalysis[] }) {
   const items = (analyses ?? [])
     .filter((a) => a.type?.toUpperCase() === "JOB_MATCH_ANALYSIS")
     .sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
@@ -306,8 +341,7 @@ function JobMatchHistory({ analyses }: { analyses: any[] }) {
           {items.map((a) => (
             <div
               key={a.id}
-              className="flex items-center justify-between rounded-lg border p-4 bg-white"
-            >
+              className="flex items-center justify-between rounded-lg border p-4 bg-white">
               <div className="min-w-0">
                 <div className="text-sm font-medium">
                   {a.status === "COMPLETED" ? "Completed" : a.status}

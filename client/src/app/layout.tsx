@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
+import Script from "next/script"; // ✅ pakai Script dari Next.js
 import "./globals.css";
 
 const poppins = Poppins({
@@ -22,10 +23,11 @@ export default function RootLayout({
     <html lang="en" className={`${poppins.variable}`}>
       <body className={`${poppins.className} antialiased`}>
         {children}
-        <script
-          type="text/javascript"
+
+        <Script
           src="https://app.sandbox.midtrans.com/snap/snap.js"
-          data-client-key={process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY}
+          data-client-key={process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY!}
+          strategy="afterInteractive"
         />
       </body>
     </html>
