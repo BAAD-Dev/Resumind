@@ -9,13 +9,13 @@ export async function createPayment(req: Request, res: Response, next: NextFunct
         if (!parsed.success) {
             return res.status(400).json({ message: "Invalid body", errors: parsed.error.flatten() });
         }
-        // const user = req.user
-        // const userID = user?.id
-        const TEST_USER_ID = "68d0c2d6e46814b25b5f29b1";
+        const user = req.user!
+        const userId = user?.id
+
         const { orderId, amount, customerName, customerEmail, customerPhone } = parsed.data;
 
         const result = await createPaymentFlow({
-            userId: TEST_USER_ID,
+            userId,
             orderId,
             amount,
             ...(customerName !== undefined && { customerName }),

@@ -90,7 +90,7 @@ class CVService {
     }
 
     await prisma.cV.delete({ where: { id: cvId } });
-    return {message : "CV and all associated analysis deleted successfully."}
+    return { message: "CV and all associated analysis deleted successfully." }
   }
 }
 
