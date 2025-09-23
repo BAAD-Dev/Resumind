@@ -10,6 +10,34 @@ import {
 } from "../data";
 // import AutoRefresher from "@/components/analysis/analysisCVAutoRefresher";
 
+type SuggestedEdit = {
+  originalCVBullet: string;
+  suggestedRewrite: string;
+};
+
+type KeywordAnalysis = {
+  jobKeywords?: string[];
+  matchedKeywords?: string[];
+  missingKeywords?: string[];
+};
+
+export type JobMatchResult = {
+  matchScore?: number;
+  matchSummary?: string;
+  keywordAnalysis?: KeywordAnalysis;
+  strengths?: string[];
+  improvementAreas?: string[];
+  suggestedEdits?: SuggestedEdit[];
+};
+
+export type JobMatchAnalysis = {
+  id: string;
+  createdAt: string;
+  status: string;
+  type: string;
+  result?: JobMatchResult;
+};
+
 export default async function JobMatcherPage({
   params,
 }: // searchParams,
@@ -22,7 +50,13 @@ export default async function JobMatcherPage({
   const selectedCvId = params.cvId || cvs[0]?.id || "";
   // const init = Boolean(searchParams?.init);
 
-  const analyses = selectedCvId ? await getAnalysesForCV(selectedCvId) : [];
+  const analyses = selectedCvId
+    ? (await getAnalysesForCV(selectedCvId)).map((a) => ({
+        ...a,
+        result: a.result as JobMatchResult, // 🔑 casting di sini
+      }))
+    : [];
+
   const latestJobMatch = pickLatestJobMatch(analyses);
 
   // const waiting =
@@ -38,7 +72,7 @@ export default async function JobMatcherPage({
           <div className="bg-white shadow rounded-xl p-6">
             <h2 className="text-lg font-semibold mb-4">Latest Match Result</h2>
             <JobMatchResult
-              result={latestJobMatch.result}
+              result={latestJobMatch.result as JobMatchResult} // ✅ cast di sini
               when={latestJobMatch.createdAt}
             />
           </div>
@@ -116,7 +150,13 @@ export default async function JobMatcherPage({
 /** ===========================
  * COMPONENT: JobMatchResult
  * =========================== */
-function JobMatchResult({ result, when }: { result: any; when: string }) {
+function JobMatchResult({
+  result,
+  when,
+}: {
+  result: JobMatchResult;
+  when: string;
+}) {
   const score =
     typeof result?.matchScore === "number"
       ? Math.max(0, Math.min(100, result.matchScore))
@@ -124,13 +164,11 @@ function JobMatchResult({ result, when }: { result: any; when: string }) {
 
   const summary = result?.matchSummary ?? null;
   const kw = result?.keywordAnalysis ?? {};
-  const strengths: string[] = Array.isArray(result?.strengths)
-    ? result.strengths
-    : [];
-  const improvements: string[] = Array.isArray(result?.improvementAreas)
+  const strengths = Array.isArray(result?.strengths) ? result.strengths : [];
+  const improvements = Array.isArray(result?.improvementAreas)
     ? result.improvementAreas
     : [];
-  const edits: any[] = Array.isArray(result?.suggestedEdits)
+  const edits: SuggestedEdit[] = Array.isArray(result?.suggestedEdits)
     ? result.suggestedEdits
     : [];
 
@@ -286,7 +324,7 @@ function BulletCard({
   );
 }
 
-function JobMatchHistory({ analyses }: { analyses: any[] }) {
+function JobMatchHistory({ analyses }: { analyses: JobMatchAnalysis[] }) {
   const items = (analyses ?? [])
     .filter((a) => a.type?.toUpperCase() === "JOB_MATCH_ANALYSIS")
     .sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));

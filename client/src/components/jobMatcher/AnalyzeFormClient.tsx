@@ -28,8 +28,12 @@ export default function AnalyzeFormClient({
 
     try {
       await analyzeJobMatchAction(fd);
-    } catch (err: any) {
-      toast.error(err?.message || "Gagal memulai job match");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        toast.error(err.message);
+      } else {
+        toast.error("Failed to fetch job");
+      }
     }
   }
 
