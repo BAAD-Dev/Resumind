@@ -36,10 +36,10 @@ class AuthController {
     try {
       const user = req.user!;
 
-      // const dataUser = await authService.userById(user.id);
+      const dataUser = await authService.getUserById(user.id);
 
       res.status(200).json({
-        // dataUser,
+        dataUser,
       });
     } catch (err) {
       next(err);
