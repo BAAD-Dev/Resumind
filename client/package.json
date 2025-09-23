@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
+    "lucide-react": "^0.544.0",
     "midtrans-client": "^1.4.3",
     "next": "15.5.3",
     "react": "19.1.0",
