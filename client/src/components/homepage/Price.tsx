@@ -26,10 +26,9 @@ const tiers = [
     description:
       "The perfect plan if you're just getting started with resume analysis.",
     features: [
-      "1x Resume Analysis per day",
-      "Basic ATS Score",
-      "Limited Resume Templates",
+      "Basic ATS Score", 
       "Basic Keyword Analysis",
+      "Simple Feedback"
     ],
   },
   {
@@ -42,10 +41,10 @@ const tiers = [
     features: [
       "Unlimited Resume Analyses",
       "In-depth ATS Score & Feedback",
-      "All Premium Templates",
-      "Job Description Analysis",
+      "Job Description Matching & Scoring",
       "AI Keyword Suggestions",
-      "Priority Support",
+      "Strengths and improvement areas highlighted",
+      "And more..."
     ],
   },
 ];
@@ -100,7 +99,7 @@ export default function Pricing() {
                   {tier.priceMonthly}
                 </span>
                 {tier.name === "Premium Plan" && (
-                  <span className="text-base text-blue-200">/month</span>
+                  <span className="text-base text-blue-200"></span>
                 )}
               </p>
               <p className="mt-6 text-base leading-7 text-blue-100">

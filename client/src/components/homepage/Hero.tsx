@@ -34,13 +34,13 @@ export default async function Hero() {
               {isLoggedIn ? (
                 <Link
                   href="/myresume/resume"
-                  className="bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg text-lg">
+                  className="bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 px-6 rounded-lg text-lg">
                   My Resume
                 </Link>
               ) : (
                 <Link
                   href="/register"
-                  className="bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded-lg text-lg">
+                  className="bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 px-6 rounded-lg text-lg">
                   Register Now
                 </Link>
               )}
