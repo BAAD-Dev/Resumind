@@ -8,5 +8,5 @@ export async function LogoutHandler() {
   // hapus cookies
   cookieStorage.delete("token");
 
-  redirect("/");
+  return redirect("/");
 }

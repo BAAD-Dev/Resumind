@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { LogoutHandler } from "./Logout";
+import { LogoutHandler } from "./logout";
 
 type NavbarProps = {
   isLoggedIn: boolean;
