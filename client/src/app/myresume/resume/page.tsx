@@ -23,10 +23,10 @@ export default async function ResumePage({
         <div className="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between">
           <div>
             <h1 className="text-xl sm:text-2xl font-semibold tracking-tight">
-              MyResume / Resume
+              Resume
             </h1>
             <p className="text-sm text-slate-500">
-              Upload CV kamu dan kelola daftar file di bawah
+              Upload your Resume or CV and manage the list of files below
             </p>
           </div>
         </div>
@@ -36,7 +36,7 @@ export default async function ResumePage({
         {/* Upload */}
         <section className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-5">
-            <h2 className="text-lg font-medium">Upload CV</h2>
+            <h2 className="text-lg font-medium">Upload file</h2>
           </div>
 
           {/* fieldName default 'cv'; ganti jika backend berbeda */}
@@ -58,13 +58,13 @@ export default async function ResumePage({
         {/* List */}
         <section>
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-medium">List CV</h2>
+            <h2 className="text-lg font-medium">List Resume</h2>
             <div className="text-sm text-slate-500">{data.length} file</div>
           </div>
 
           {data.length === 0 ? (
             <div className="rounded-xl border border-slate-200 bg-white p-6 text-center text-slate-600">
-              Belum ada file yang diupload.
+              No files uploaded yet.
             </div>
           ) : (
             <div className="flex flex-col gap-3">
