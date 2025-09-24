@@ -1,6 +1,7 @@
 import nodemailer from "nodemailer";
 import { env } from "../config/env.js";
 
+const backendApi = "https://api.resumind.live"
 const transporter = nodemailer.createTransport({
   host: env.smtp.host,
   port: env.smtp.port,
@@ -13,7 +14,7 @@ const transporter = nodemailer.createTransport({
 
 class EmailService {
   async sendVerification(to: string, name: string, token: string) {
-    const verificationUrl = `http://localhost:${env.port}/api/auth/verify/${token}`; //Change this later in production, frontend URL later on
+    const verificationUrl = `${backendApi}/api/auth/verify/${token}`;
 
     const mailOptions = {
       from: '"Resumind Team" <noreply.resumind@gmail.com>',
