@@ -60,7 +60,6 @@ export default function LoginForm() {
       }
 
       router.push("/");
-      router.refresh();
     } catch (error: unknown) {
       if (error instanceof Error) {
         setError(error.message);
