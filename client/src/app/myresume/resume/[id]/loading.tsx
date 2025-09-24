@@ -53,7 +53,7 @@ export default function Loading() {
           {/* Title + progress bar */}
           <div className="flex-1">
             <h1 className="text-xl font-semibold">
-              Running <span className="text-blue-600">CV Analysis</span>
+              Running <span className="text-blue-600">Resume Analysis</span>
             </h1>
             <p className="text-slate-600 mt-1">
               Please wait a moment. This page will refresh automatically when

@@ -21,11 +21,11 @@ const CVlist = ({ item }: { item: CVItem }) => {
             {item.originalName}
           </div>
           <div className="text-xs text-slate-500">
-            Diunggah: {formatDate(item.createdAt)}
+            Upload: {formatDate(item.createdAt)}
           </div>
           {item.expiresAt && (
             <div className="text-xs text-amber-600">
-              Kedaluwarsa: {formatDate(item.expiresAt)}
+              Expired: {formatDate(item.expiresAt)}
             </div>
           )}
         </div>
@@ -39,13 +39,13 @@ const CVlist = ({ item }: { item: CVItem }) => {
           rel="noreferrer"
           className="inline-flex items-center justify-center rounded-lg border border-slate-300 px-3 py-1.5 text-sm hover:bg-slate-50"
         >
-          Buka
+          Open
         </a>
         <Link
           href={`./resume/${item.id}`}
           className="inline-flex items-center justify-center rounded-lg bg-blue-600 text-white px-3 py-1.5 text-sm hover:bg-blue-700"
         >
-          Analysis CV
+          Analyze Resume or CV
         </Link>
       </div>
     </div>

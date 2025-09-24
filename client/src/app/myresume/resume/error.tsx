@@ -24,7 +24,7 @@ export default function Error({
               Resume
             </h1>
             <p className="text-sm text-slate-500">
-              Gagal memuat data CV — coba lagi sebentar ya
+              Failed to load Resume data — please try again later.
             </p>
           </div>
         </div>
