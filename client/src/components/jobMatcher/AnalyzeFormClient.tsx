@@ -1,10 +1,11 @@
 "use client";
 
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { toast } from "react-toastify";
 import { analyzeJobMatchAction } from "@/app/myresume/job-matcher/action";
 import { formatDate } from "@/lib/format";
 import { CVItem, JobItem } from "@/app/myresume/job-matcher/data";
+import ModalLoader from "./ModalLoader";
 
 // type CV = { id: string; originalName: string; createdAt: string };
 // type Job = { id: string; title: string; company?: string; createdAt: string };
@@ -20,6 +21,7 @@ export default function AnalyzeFormClient({
 }) {
   // const router = useRouter();
   const [pending] = useTransition();
+  const [loading, setLoading] = useState(false);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -27,18 +29,22 @@ export default function AnalyzeFormClient({
     const fd = new FormData(form);
 
     try {
+      setLoading(true);
       await analyzeJobMatchAction(fd);
     } catch (err: unknown) {
       if (err instanceof Error) {
         toast.error(err.message);
       } else {
         toast.error("Failed to fetch job");
-      }
-    }
+      } 
+    }finally {
+    setLoading(false);
+  }
   }
 
   return (
     <form onSubmit={onSubmit} className="space-y-4">
+      {loading && <ModalLoader />}
       {/* Select file */}
       <div>
         <label className="block text-sm font-medium mb-1">Select file</label>
