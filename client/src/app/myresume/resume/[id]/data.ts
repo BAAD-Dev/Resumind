@@ -69,8 +69,8 @@ export function pickBestAnalysis(list: CvAnalysis[]): CvAnalysis | null {
     const sorted = [...list].sort(
         (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
-
+    
     // prioritas COMPLETED terbaru
-    const done = sorted.find(a => a.status?.toUpperCase() === "COMPLETED");
+    const done = sorted.find(a => a.type?.toUpperCase() === "CV_ANALYSIS");
     return done ?? sorted[0];
 }
