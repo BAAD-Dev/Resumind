@@ -1,5 +1,5 @@
 import { formatDate } from "@/lib/format";
-import { analyzeJobMatchAction, deleteJobAction } from "./action";
+import { deleteJobAction } from "./action";
 import {
   getCVs,
   getUserJobs,
@@ -32,6 +32,20 @@ type Analysis = {
 
 type JobMatcherPageProps = {
   searchParams?: Record<string, string | string[] | undefined>;
+};
+
+type JobMatchResult = {
+  overallScore?: number;
+  summary?: string;
+  actionableNextSteps?: string[];
+};
+
+type JobMatchAnalysis = {
+  id: string;
+  createdAt: string;
+  status: string;
+  type: string;
+  result?: JobMatchResult;
 };
 
 export default async function JobMatcherPage({
@@ -83,6 +97,7 @@ export default async function JobMatcherPage({
               ? <WaitingPanel />
               : <AnalyzeFormClient cvs={cvs} jobs={jobs} selectedCvId={selectedCvId} />
             }
+
           </div>
           <br />
 
@@ -99,8 +114,10 @@ export default async function JobMatcherPage({
                 result={latestJobMatch.result as AnalysisResult}
                 when={latestJobMatch.createdAt}
               />
+
             </div>
           )}
+
 
           {/* GRID: Saved Jobs / Analysis History */}
           <div className="grid md:grid-cols-2 gap-6">
@@ -200,6 +217,7 @@ function WaitingPanel() {
   );
 }
 
+
 /* ===== Result Summary ===== */
 type ResultSummaryProps = {
   result: AnalysisResult;
@@ -208,6 +226,7 @@ type ResultSummaryProps = {
 
 function ResultSummary({ result, when }: ResultSummaryProps) {
   const score: number | null =
+
     typeof result?.overallScore === "number"
       ? Math.max(0, Math.min(100, result.overallScore))
       : null;
@@ -264,7 +283,7 @@ function ResultSummary({ result, when }: ResultSummaryProps) {
             ))}
           </ul>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }
@@ -275,6 +294,7 @@ type JobMatchHistoryProps = {
 };
 
 function JobMatchHistory({ analyses }: JobMatchHistoryProps) {
+
   const items = (analyses ?? [])
     .filter((a) => a.type?.toUpperCase() === "JOB_MATCH_ANALYSIS")
     .sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));

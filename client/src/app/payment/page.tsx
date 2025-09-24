@@ -1,9 +1,15 @@
-// app/pricing/page.tsx
 export const dynamic = "force-dynamic";
 
+import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+
+type PaymentResponse = {
+  message?: string;
+  redirect_url?: string;
+  token?: string;
+};
 
 // ====== CONFIG ======
 const PREMIUM_PRICE = 29999;
@@ -11,16 +17,16 @@ const BACKEND_BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:8000";
 
 // (Opsional) helper format rupiah
-function formatIDR(amount: number) {
-  return new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
+// function formatIDR(amount: number) {
+//   return new Intl.NumberFormat("id-ID", {
+//     style: "currency",
+//     currency: "IDR",
+//     maximumFractionDigits: 0,
+//   }).format(amount);
+// }
 
 // ====== SERVER ACTION ======
-async function upgradeAction(_formData: FormData) {
+async function upgradeAction() {
   "use server";
 
   const payload = {
@@ -44,9 +50,9 @@ async function upgradeAction(_formData: FormData) {
     cache: "no-store",
   });
 
-  let data: any = null;
+  let data: PaymentResponse | null = null;
   try {
-    data = await res.json();
+    data = (await res.json()) as PaymentResponse;
   } catch {}
 
   if (!res.ok) {
@@ -70,29 +76,25 @@ const tiers = [
   {
     name: "Free Plan",
     id: "tier-free",
-    priceLabel: "Rp 0",
+    priceMonthly: "Rp.0",
     description:
       "The perfect plan if you're just getting started with resume analysis.",
-    features: [
-      "1x Resume Analysis per day",
-      "Basic ATS Score",
-      "Limited Resume Templates",
-    ],
+    features: ["Basic ATS Score", "Basic Keyword Analysis", "Simple Feedback"],
     isPremium: false,
   },
   {
     name: "Premium Plan",
     id: "tier-premium",
-    priceLabel: `${formatIDR(PREMIUM_PRICE)} / month`,
+    priceMonthly: "Rp.29.999",
     description:
       "Dedicated support and unlimited analysis for serious job seekers.",
     features: [
       "Unlimited Resume Analyses",
       "In-depth ATS Score & Feedback",
-      "All Premium Templates",
-      "Job Description Analysis",
+      "Job Description Matching & Scoring",
       "AI Keyword Suggestions",
-      "Priority Support",
+      "Strengths and improvement areas highlighted",
+      "And more...",
     ],
     isPremium: true,
   },
@@ -105,8 +107,7 @@ function CheckIcon({ className }: { className?: string }) {
       viewBox="0 0 20 20"
       fill="currentColor"
       className={className ?? ""}
-      aria-hidden="true"
-    >
+      aria-hidden="true">
       <path
         fillRule="evenodd"
         d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.052-.143z"
@@ -120,21 +121,32 @@ export default function PricingPage() {
   return (
     <div
       id="price"
-      className="relative isolate bg-muted px-6 py-10 sm:py-20 lg:px-8"
-    >
+      className="relative isolate bg-muted px-6 py-10 sm:py-20 lg:px-8">
       <div className="mx-auto max-w-4xl text-center">
         <p className="mt-2 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
           One Payment Away from Premium
         </p>
       </div>
 
-      <p className="mx-auto mt-6 max-w-2xl text-center text-lg leading-8 text-gray-600">
+      <div className="mx-auto mt-6 max-w-2xl text-center text-lg leading-8 text-gray-600">
         Unlock powerful AI tools to analyze your CV, match with jobs, and boost
-        your chances — all just one payment away. Upgrade now and take control
-        of your career journey.
-      </p>
+        your chances — all just one payment away.
+        <p className="mt-5">
+          Upgrade now and take control of your career journey!
+        </p>
+      </div>
 
-      <div className="mx-auto mt-16 grid max-w-lg grid-cols-1 gap-y-6 sm:mt-20 lg:max-w-4xl lg:grid-cols-2">
+      {/* Back Button */}
+      <div className="max-w-4xl mx-auto mb-6 flex justify-center">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 mt-10 text-sm font-medium text-blue-700 hover:text-blue-900">
+          <ArrowLeftIcon className="h-5 w-5" />
+          Back
+        </Link>
+      </div>
+
+      <div className="mx-auto mt-10 grid max-w-lg grid-cols-1 gap-y-6 sm:mt-20 lg:max-w-4xl lg:grid-cols-2">
         {tiers.map((tier, idx) => (
           <div
             key={tier.id}
@@ -144,18 +156,16 @@ export default function PricingPage() {
               idx === 0
                 ? "sm:rounded-b-none lg:rounded-tr-none lg:rounded-bl-3xl"
                 : "sm:rounded-t-none lg:rounded-tr-3xl lg:rounded-bl-none",
-            ].join(" ")}
-          >
+            ].join(" ")}>
             <h3
               id={tier.id}
-              className="text-base font-semibold leading-7 text-white"
-            >
+              className="text-base font-semibold leading-7 text-white">
               {tier.name}
             </h3>
 
             <p className="mt-4 flex items-baseline gap-x-2">
               <span className="text-4xl font-bold tracking-tight text-white">
-                {tier.priceLabel}
+                {tier.priceMonthly}
               </span>
             </p>
 
@@ -165,8 +175,7 @@ export default function PricingPage() {
 
             <ul
               role="list"
-              className="mt-8 space-y-3 text-sm leading-6 text-blue-100 sm:mt-10"
-            >
+              className="mt-8 space-y-3 text-sm leading-6 text-blue-100 sm:mt-10">
               {tier.features.map((feature) => (
                 <li key={feature} className="flex gap-x-3">
                   <CheckIcon className="h-6 w-5 flex-none text-white" />
@@ -177,11 +186,9 @@ export default function PricingPage() {
 
             {tier.isPremium ? (
               <form action={upgradeAction} className="mt-8">
-                {/* Kalau mau kirim data tambahan (coupon/userId), tambahkan hidden input di sini */}
                 <button
                   type="submit"
-                  className="w-full rounded-md px-3.5 py-2.5 text-center text-sm font-semibold transition-colors duration-300 bg-white text-blue-600 shadow-sm hover:bg-blue-50"
-                >
+                  className="w-full cursor-pointer rounded-md px-3.5 py-2.5 text-center text-sm font-semibold transition-colors duration-300 bg-white text-blue-600 shadow-sm hover:bg-blue-50">
                   Upgrade Now
                 </button>
               </form>
@@ -189,8 +196,7 @@ export default function PricingPage() {
               <Link
                 href="/"
                 aria-describedby={tier.id}
-                className="mt-8 block rounded-md px-3.5 py-2.5 text-center text-sm font-semibold transition-colors duration-300 bg-blue-900/50 text-white hover:bg-blue-900/70"
-              >
+                className="mt-8 block rounded-md px-3.5 py-2.5 text-center text-sm font-semibold transition-colors duration-300 bg-blue-900/50 text-white hover:bg-blue-900/70">
                 Get started free
               </Link>
             )}
