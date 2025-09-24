@@ -48,6 +48,11 @@ export default async function ProfilePage() {
     }).format(date);
   }
 
+  function displayRole(role: string) {
+    if (role === "PAID") return "PREMIUM";
+    return role;
+  }
+
   const userInitial = user?.name ? user.name.charAt(0).toUpperCase() : "U";
 
   return (
@@ -62,11 +67,13 @@ export default async function ProfilePage() {
           </div>
 
           {/* User Info */}
-          <div className="w-full md:flex-1 text-center md:text-left">
+          <div className="flex-1">
+            {/* Basic Info */}
             <h2 className="text-3xl font-bold text-gray-800">{user?.name}</h2>
             <p className="text-gray-500 mt-3 font-base">{user?.email}</p>
 
-            <div className="border-t mt-6 pt-6 grid grid-cols-2 gap-6 max-w-xs mx-auto md:mx-0">
+            {/* Divider */}
+            <div className="border-t mt-6 pt-6 grid grid-cols-2 gap-6">
               {/* Plan */}
               <div>
                 <span className="text-sm mx-1.5 text-gray-500 block">Plan</span>
@@ -76,9 +83,10 @@ export default async function ProfilePage() {
                       ? "bg-red-100 text-red-600"
                       : "bg-green-100 text-green-600"
                   }`}>
-                  {user?.role}
+                  {displayRole(user?.role)}
                 </span>
               </div>
+
               {/* Joined */}
               <div>
                 <span className="text-sm text-gray-500 block">Joined</span>

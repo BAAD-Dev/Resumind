@@ -5,12 +5,14 @@ import apiRouter from "./router/index.js";
 import { env } from "./config/env.js";
 
 const app = express();
+
 app.use(
   cors({
-    origin: env.corsOrigins,
+    origin: [env.frontendUrl,"http://localhost:3000","http://localhost:3001","*"],
     credentials: true,
   })
 );
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

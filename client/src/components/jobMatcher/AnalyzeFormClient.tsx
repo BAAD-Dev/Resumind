@@ -1,14 +1,13 @@
 "use client";
 
 import { useTransition } from "react";
-import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { analyzeJobMatchAction } from "@/app/myresume/job-matcher/action";
 import { formatDate } from "@/lib/format";
 import { CVItem, JobItem } from "@/app/myresume/job-matcher/data";
 
-type CV = { id: string; originalName: string; createdAt: string };
-type Job = { id: string; title: string; company?: string; createdAt: string };
+// type CV = { id: string; originalName: string; createdAt: string };
+// type Job = { id: string; title: string; company?: string; createdAt: string };
 
 export default function AnalyzeFormClient({
   cvs,
@@ -19,8 +18,8 @@ export default function AnalyzeFormClient({
   jobs: JobItem[];
   selectedCvId: string;
 }) {
-  const router = useRouter();
-  const [pending, startTransition] = useTransition();
+  // const router = useRouter();
+  const [pending] = useTransition();
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -29,8 +28,12 @@ export default function AnalyzeFormClient({
 
     try {
       await analyzeJobMatchAction(fd);
-    } catch (err: any) {
-      toast.error(err?.message || "Gagal memulai job match");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        toast.error(err.message);
+      } else {
+        toast.error("Failed to fetch job");
+      }
     }
   }
 
@@ -43,8 +46,7 @@ export default function AnalyzeFormClient({
           name="cvId"
           defaultValue={selectedCvId}
           className="w-full border rounded-md p-2"
-          required
-        >
+          required>
           {!selectedCvId && <option value="">— Choose your CV —</option>}
           {cvs.map((cv) => (
             <option key={cv.id} value={cv.id}>
@@ -107,8 +109,7 @@ export default function AnalyzeFormClient({
       <button
         type="submit"
         disabled={pending}
-        className="mt-2 px-6 py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 transition disabled:opacity-60"
-      >
+        className="mt-2 px-6 py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 transition disabled:opacity-60">
         {pending ? "Evaluating…" : "Evaluate Job Posting"}
       </button>
     </form>
