@@ -10,7 +10,12 @@ import AutoRefresher from "@/components/analysis/analysisCVAutoRefresher";
 import AnalyzeFormClient from "@/components/jobMatcher/AnalyzeFormClient";
 import DeleteJobButton from "@/components/jobMatcher/DeleteJobButton";
 import {
-  BarChart, Briefcase, History, Sparkles, CheckCircle, Loader2,
+  BarChart,
+  Briefcase,
+  History,
+  Sparkles,
+  CheckCircle,
+  Loader2,
 } from "lucide-react";
 import React from "react";
 
@@ -61,6 +66,7 @@ export default async function JobMatcherPage({
     cvId: a.cvId,
     updatedAt: a.updatedAt,
   }));
+  
   const latestJobMatch = pickLatestJobMatch(analyses);
 
   // Status waiting dapat (dan biasanya) dihandle oleh server logic, yakni:
@@ -90,34 +96,35 @@ export default async function JobMatcherPage({
               </h2>
             </div>
             {/* Modal overlay if waiting */}
-            {waiting && (
-              <ModalLoader />
+            {waiting && <ModalLoader />}
+            {waiting ? (
+              <WaitingPanel />
+            ) : (
+              <AnalyzeFormClient
+                cvs={cvs}
+                jobs={jobs}
+                selectedCvId={selectedCvId}
+              />
             )}
-            {waiting
-              ? <WaitingPanel />
-              : <AnalyzeFormClient cvs={cvs} jobs={jobs} selectedCvId={selectedCvId} />
-            }
-
           </div>
           <br />
 
           {/* LATEST MATCH RESULT (now under Evaluate, before grid) */}
-          {!waiting && latestJobMatch?.status?.toUpperCase() === "COMPLETED" && (
-            <div className="rounded-2xl shadow bg-white p-6 md:p-8 mt-0">
-              <div className="flex items-center gap-2 mb-4">
-                <BarChart className="w-6 h-6 text-emerald-500" />
-                <h2 className="text-lg font-semibold tracking-tight text-[#162B60]">
-                  Latest Match Result
-                </h2>
+          {!waiting &&
+            latestJobMatch?.status?.toUpperCase() === "COMPLETED" && (
+              <div className="rounded-2xl shadow bg-white p-6 md:p-8 mt-0">
+                <div className="flex items-center gap-2 mb-4">
+                  <BarChart className="w-6 h-6 text-emerald-500" />
+                  <h2 className="text-lg font-semibold tracking-tight text-[#162B60]">
+                    Latest Match Result
+                  </h2>
+                </div>
+                <ResultSummary
+                  result={latestJobMatch.result as AnalysisResult}
+                  when={latestJobMatch.createdAt}
+                />
               </div>
-              <ResultSummary
-                result={latestJobMatch.result as AnalysisResult}
-                when={latestJobMatch.createdAt}
-              />
-
-            </div>
-          )}
-
+            )}
 
           {/* GRID: Saved Jobs / Analysis History */}
           <div className="grid md:grid-cols-2 gap-6">
@@ -140,7 +147,10 @@ export default async function JobMatcherPage({
                           {job.title}
                         </span>
                         {job.company && (
-                          <span className="text-gray-500"> · {job.company}</span>
+                          <span className="text-gray-500">
+                            {" "}
+                            · {job.company}
+                          </span>
                         )}
                         <div className="text-xs text-gray-400 truncate">
                           Saved {formatDate(job.createdAt)}
@@ -152,7 +162,10 @@ export default async function JobMatcherPage({
                           await deleteJobAction(job.id, selectedCvId);
                         }}
                       >
-                        <DeleteJobButton jobId={job.id} currentCvId={selectedCvId} />
+                        <DeleteJobButton
+                          jobId={job.id}
+                          currentCvId={selectedCvId}
+                        />
                       </form>
                     </li>
                   ))}
@@ -182,7 +195,8 @@ function ModalLoader() {
           Your analysis is being processed...
         </div>
         <div className="text-gray-500 text-sm text-center">
-          Please wait while we analyze your resume with the selected job posting.
+          Please wait while we analyze your resume with the selected job
+          posting.
         </div>
       </div>
     </div>
@@ -197,7 +211,7 @@ function WaitingPanel() {
         <div
           className="h-14 w-14 rounded-full"
           style={{
-            background: `conic-gradient(#2563eb 120deg, #e5e7eb 0deg)`
+            background: `conic-gradient(#2563eb 120deg, #e5e7eb 0deg)`,
           }}
         />
         <div className="absolute inset-2 rounded-full bg-white flex items-center justify-center shadow">
@@ -217,7 +231,6 @@ function WaitingPanel() {
   );
 }
 
-
 /* ===== Result Summary ===== */
 type ResultSummaryProps = {
   result: AnalysisResult;
@@ -226,7 +239,6 @@ type ResultSummaryProps = {
 
 function ResultSummary({ result, when }: ResultSummaryProps) {
   const score: number | null =
-
     typeof result?.overallScore === "number"
       ? Math.max(0, Math.min(100, result.overallScore))
       : null;
@@ -261,7 +273,9 @@ function ResultSummary({ result, when }: ResultSummaryProps) {
                 strokeLinecap="round"
               />
             </svg>
-            <span className="absolute text-sm font-bold text-[#162B60]">{score}</span>
+            <span className="absolute text-sm font-bold text-[#162B60]">
+              {score}
+            </span>
           </div>
         )}
         <div className="text-xs text-gray-400 mt-1">
@@ -270,13 +284,17 @@ function ResultSummary({ result, when }: ResultSummaryProps) {
       </div>
       {result?.summary && (
         <div className="mb-2 mt-3">
-          <div className="font-semibold text-[#162B60] text-[15px] mb-1">Summary</div>
+          <div className="font-semibold text-[#162B60] text-[15px] mb-1">
+            Summary
+          </div>
           <p className="text-sm text-gray-700">{result.summary}</p>
         </div>
       )}
-      {!!result?.actionableNextSteps?.length && (
+      {!!result?.actionableNextSteps?.length ? (
         <div className="mt-2">
-          <div className="font-semibold text-[#162B60] text-[15px] mb-1">Actionable Next Steps</div>
+          <div className="font-semibold text-[#162B60] text-[15px] mb-1">
+            Actionable Next Steps
+          </div>
           <ul className="space-y-1 pl-4 list-disc text-sm text-gray-700">
             {result.actionableNextSteps.map((step, i) => (
               <li key={i}>{step}</li>
@@ -294,7 +312,6 @@ type JobMatchHistoryProps = {
 };
 
 function JobMatchHistory({ analyses }: JobMatchHistoryProps) {
-
   const items = (analyses ?? [])
     .filter((a) => a.type?.toUpperCase() === "JOB_MATCH_ANALYSIS")
     .sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
@@ -302,7 +319,13 @@ function JobMatchHistory({ analyses }: JobMatchHistoryProps) {
   const statusChip = (status: string) => {
     const isDone = status.toUpperCase() === "COMPLETED";
     return (
-      <span className={`inline-block px-2 py-0.5 rounded text-xs font-semibold ${isDone ? "bg-emerald-100 text-emerald-700" : "bg-yellow-100 text-yellow-700"}`}>
+      <span
+        className={`inline-block px-2 py-0.5 rounded text-xs font-semibold ${
+          isDone
+            ? "bg-emerald-100 text-emerald-700"
+            : "bg-yellow-100 text-yellow-700"
+        }`}
+      >
         {isDone ? "Completed" : "In Progress"}
       </span>
     );
@@ -323,7 +346,10 @@ function JobMatchHistory({ analyses }: JobMatchHistoryProps) {
       ) : (
         <ul className="space-y-2">
           {items.map((a) => (
-            <li key={a.id} className="flex justify-between items-center rounded-md px-4 py-2 hover:bg-[#f6f8fd] transition">
+            <li
+              key={a.id}
+              className="flex justify-between items-center rounded-md px-4 py-2 hover:bg-[#f6f8fd] transition"
+            >
               <div>
                 <div className="flex items-center gap-2">
                   {statusChip(a.status)}
@@ -333,7 +359,9 @@ function JobMatchHistory({ analyses }: JobMatchHistoryProps) {
                     </span>
                   )}
                 </div>
-                <div className="text-xs text-gray-400">{formatDate(a.createdAt)} · ID: {a.id.slice(0, 6)}…</div>
+                <div className="text-xs text-gray-400">
+                  {formatDate(a.createdAt)} · ID: {a.id.slice(0, 6)}…
+                </div>
               </div>
             </li>
           ))}

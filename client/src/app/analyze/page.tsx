@@ -12,9 +12,9 @@ export default async function AnalyzePage() {
   if (token) {
     try {
       const res = await fetch(
-        ${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/userLogin,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/userLogin`,
         {
-          headers: { Authorization: Bearer ${token} },
+          headers: { Authorization: `Bearer ${token}` },
           cache: "no-store",
         }
       );
