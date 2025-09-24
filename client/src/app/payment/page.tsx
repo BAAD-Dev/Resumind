@@ -57,7 +57,7 @@ async function upgradeAction() {
 
   if (!res.ok) {
     const msg =
-      data?.message ?? `Gagal membuat pembayaran (status: ${res.status})`;
+      data?.message ?? `Payment failed (status: ${res.status})`;
     throw new Error(msg);
   }
 
@@ -69,7 +69,7 @@ async function upgradeAction() {
     redirect(`https://app.sandbox.midtrans.com/snap/v2/vtweb/${data.token}`);
   }
 
-  throw new Error("Server tidak mengembalikan redirect_url atau token.");
+  throw new Error("Server did not return redirect_url or token.");
 }
 
 const tiers = [

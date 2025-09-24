@@ -1,7 +1,6 @@
 export const dynamic = "force-dynamic";
 
 import { formatDate } from "@/lib/format";
-import { deleteJobAction } from "../action"; // sesuaikan jika path beda
 import {
   getCVs,
   getUserJobs,
@@ -96,15 +95,6 @@ export default async function JobMatcherPage({
                       Saved {formatDate(job.createdAt)}
                     </div>
                   </div>
-                  <form
-                    action={async () => {
-                      "use server";
-                      await deleteJobAction(job.id, selectedCvId);
-                    }}>
-                    <button className="text-sm rounded-md border px-3 py-1.5 hover:bg-slate-50">
-                      Delete
-                    </button>
-                  </form>
                 </div>
               ))}
             </div>

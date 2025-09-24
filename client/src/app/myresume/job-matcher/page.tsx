@@ -10,9 +10,10 @@ import AutoRefresher from "@/components/analysis/analysisCVAutoRefresher";
 import AnalyzeFormClient from "@/components/jobMatcher/AnalyzeFormClient";
 import DeleteJobButton from "@/components/jobMatcher/DeleteJobButton";
 import {
-  BarChart, Briefcase, History, Sparkles, CheckCircle, Loader2,
+  BarChart, Briefcase, History, Sparkles,
 } from "lucide-react";
 import React from "react";
+import Link from "next/link";
 
 type AnalysisResult = {
   overallScore: number;
@@ -34,20 +35,6 @@ type JobMatcherPageProps = {
   searchParams?: Record<string, string | string[] | undefined>;
 };
 
-type JobMatchResult = {
-  overallScore?: number;
-  summary?: string;
-  actionableNextSteps?: string[];
-};
-
-type JobMatchAnalysis = {
-  id: string;
-  createdAt: string;
-  status: string;
-  type: string;
-  result?: JobMatchResult;
-};
-
 export default async function JobMatcherPage({
   searchParams,
 }: JobMatcherPageProps) {
@@ -55,12 +42,26 @@ export default async function JobMatcherPage({
   const selectedCvId = (searchParams?.cv as string) || cvs[0]?.id || "";
   const init = Boolean(searchParams?.init);
   const rawAnalyses = selectedCvId ? await getAnalysesForCV(selectedCvId) : [];
-  const analyses: Analysis[] = rawAnalyses.map((a: any) => ({
-    ...a,
-    result: a.result as AnalysisResult,
-    cvId: a.cvId,
-    updatedAt: a.updatedAt,
-  }));
+type RawAnalysis = {
+  id: string;
+  type: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  cvId: string;
+  result: unknown;
+};
+
+const analyses: Analysis[] = rawAnalyses.map((a: unknown) => {
+  // Add proper type guards here if needed
+  const analysis = a as RawAnalysis;
+  return {
+    ...analysis,
+    result: analysis.result as AnalysisResult,
+    cvId: analysis.cvId,
+    updatedAt: analysis.updatedAt,
+  };
+});
   const latestJobMatch = pickLatestJobMatch(analyses);
 
   // Status waiting dapat (dan biasanya) dihandle oleh server logic, yakni:
@@ -283,7 +284,7 @@ function ResultSummary({ result, when }: ResultSummaryProps) {
             ))}
           </ul>
         </div>
-      ) : null}
+      )}
     </div>
   );
 }
@@ -335,6 +336,9 @@ function JobMatchHistory({ analyses }: JobMatchHistoryProps) {
                 </div>
                 <div className="text-xs text-gray-400">{formatDate(a.createdAt)} · ID: {a.id.slice(0, 6)}…</div>
               </div>
+              <Link href={`/myresume/job-matcher/${a.cvId}`} className="text-xs font-semibold text-[#162B60]">
+                View Details
+              </Link>
             </li>
           ))}
         </ul>
