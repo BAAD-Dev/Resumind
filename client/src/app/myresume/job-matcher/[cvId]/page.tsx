@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import { formatDate } from "@/lib/format";
-import { deleteJobAction } from "../action"; // sesuaikan jika path beda
+
 import {
   getCVs,
   getUserJobs,
@@ -40,20 +40,19 @@ export type JobMatchAnalysis = {
 
 export default async function JobMatcherPage({
   params,
-}: // searchParams,
-{
-  params: { cvId: string };
-  // searchParams?: Record<string, string | string[] | undefined>;
+}: {
+  params: Promise<{ cvId: string }>;
 }) {
   const [cvs, jobs] = await Promise.all([getCVs(), getUserJobs()]);
 
-  const selectedCvId = params.cvId || cvs[0]?.id || "";
-  // const init = Boolean(searchParams?.init);
+  // ✅ WAJIB di-await untuk Next.js 15
+  const resolvedParams = await params;
+  const selectedCvId = resolvedParams.cvId || cvs[0]?.id || "";
 
   const analyses = selectedCvId
     ? (await getAnalysesForCV(selectedCvId)).map((a) => ({
         ...a,
-        result: a.result as JobMatchResult, // 🔑 casting di sini
+        result: a.result as JobMatchResult,
       }))
     : [];
 
@@ -96,15 +95,6 @@ export default async function JobMatcherPage({
                       Saved {formatDate(job.createdAt)}
                     </div>
                   </div>
-                  <form
-                    action={async () => {
-                      "use server";
-                      await deleteJobAction(job.id, selectedCvId);
-                    }}>
-                    <button className="text-sm rounded-md border px-3 py-1.5 hover:bg-slate-50">
-                      Delete
-                    </button>
-                  </form>
                 </div>
               ))}
             </div>

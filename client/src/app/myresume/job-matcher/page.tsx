@@ -1,5 +1,3 @@
-export const dynamic = "force-dynamic";
-
 import { formatDate } from "@/lib/format";
 import { deleteJobAction } from "./action";
 import {
@@ -8,235 +6,150 @@ import {
   getAnalysesForCV,
   pickLatestJobMatch,
 } from "./data";
-import AutoRefresher from "@/components/analysis/analysisCVAutoRefresher";
 import AnalyzeFormClient from "@/components/jobMatcher/AnalyzeFormClient";
 import DeleteJobButton from "@/components/jobMatcher/DeleteJobButton";
+import ModalLoader from "@/components/jobMatcher/ModalLoader";
+import WaitingPanel from "@/components/jobMatcher/WaitingPanel";
+import ResultSummary from "@/components/jobMatcher/ResultSummary";
+import JobMatchHistory from "@/components/jobMatcher/JobMatchHistory";
+import { AnalysisResult, Analysis, RawAnalysis } from "@/components/jobMatcher/types";
+import {
+  BarChart, Briefcase, Sparkles,
+} from "lucide-react";
+import React from "react";
 
-type JobMatchResult = {
-  overallScore?: number;
-  summary?: string;
-  actionableNextSteps?: string[];
-};
-
-type JobMatchAnalysis = {
-  id: string;
-  createdAt: string;
-  status: string;
-  type: string;
-  result?: JobMatchResult;
+// ✅ Perubahan: searchParams jadi Promise
+type JobMatcherPageProps = {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
 
 export default async function JobMatcherPage({
   searchParams,
-}: {
-  searchParams?: Record<string, string | string[] | undefined>;
-}) {
+}: JobMatcherPageProps) {
   const [cvs, jobs] = await Promise.all([getCVs(), getUserJobs()]);
 
-  const selectedCvId = (searchParams?.cv as string) || cvs[0]?.id || "";
-  const init = Boolean(searchParams?.init);
+  // ✅ Wajib di-await sebelum akses property
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
+  const selectedCvId = (resolvedSearchParams?.cv as string) || cvs[0]?.id || "";
+  const init = Boolean(resolvedSearchParams?.init);
 
-  const analyses = selectedCvId ? await getAnalysesForCV(selectedCvId) : [];
+  const rawAnalyses = selectedCvId ? await getAnalysesForCV(selectedCvId) : [];
+
+  const analyses: Analysis[] = rawAnalyses.map((a: unknown) => {
+    const analysis = a as RawAnalysis;
+    return {
+      ...analysis,
+      result: analysis.result as AnalysisResult,
+      cvId: analysis.cvId,
+      updatedAt: analysis.updatedAt,
+    };
+  });
+
   const latestJobMatch = pickLatestJobMatch(analyses);
 
-  const waiting =
-    selectedCvId &&
+  const waiting: boolean =
+    !!selectedCvId &&
     init &&
     (!latestJobMatch || latestJobMatch.status?.toUpperCase() !== "COMPLETED");
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <main className="flex-1 p-6 space-y-6">
-        <div className="bg-white shadow rounded-xl p-6">
-          <h2 className="text-lg font-semibold mb-4">
-            Evaluate with Job Posting
-          </h2>
-
-          {waiting ? (
-            <WaitingPanel />
-          ) : (
-            <AnalyzeFormClient
-              cvs={cvs}
-              jobs={jobs}
-              selectedCvId={selectedCvId}
-            />
-          )}
-        </div>
-
-        {/* Latest result */}
-        {latestJobMatch?.status?.toUpperCase() === "COMPLETED" && (
-          <div className="bg-white shadow rounded-xl p-6">
-            <h2 className="text-lg font-semibold mb-4">Latest Match Result</h2>
-            <ResultSummary
-              result={latestJobMatch.result as JobMatchResult}
-              when={latestJobMatch.createdAt}
-            />
-          </div>
-        )}
-
-        {/* Saved Jobs + delete */}
-        <div className="bg-white shadow rounded-xl p-6">
-          <h2 className="text-lg font-semibold mb-4">Saved Jobs</h2>
-          {jobs.length ? (
-            <div className="space-y-3">
-              {jobs.map((job) => (
-                <div
-                  key={job.id}
-                  className="flex items-center justify-between rounded-lg border p-4">
-                  <div className="min-w-0">
-                    <div className="font-medium truncate">
-                      {job.title}
-                      {job.company ? ` · ${job.company}` : ""}
-                    </div>
-                    <div className="text-xs text-slate-600">
-                      Saved {formatDate(job.createdAt)}
-                    </div>
-                  </div>
-                  <form
-                    action={async () => {
-                      "use server";
-                      await deleteJobAction(job.id, selectedCvId);
-                    }}>
-                    <DeleteJobButton
-                      jobId={job.id}
-                      currentCvId={selectedCvId}
-                    />
-                  </form>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-gray-500 text-sm">No saved jobs yet.</p>
-          )}
-        </div>
-
-        {/* History */}
-        <JobMatchHistory analyses={analyses as JobMatchAnalysis[]} />
-      </main>
-    </div>
-  );
-}
-
-/* ===== Small UI helpers ===== */
-
-function WaitingPanel() {
-  return (
-    <div className="rounded-xl border bg-white p-6 text-center">
-      <div className="relative mx-auto h-20 w-20">
-        <div
-          className="h-20 w-20 rounded-full"
-          style={{ background: `conic-gradient(#2563eb 120deg, #e5e7eb 0deg)` }}
-        />
-        <div className="absolute inset-2 rounded-full bg-white flex items-center justify-center shadow-sm">
-          <div className="h-6 w-6 animate-spin rounded-full border-2 border-slate-300 border-t-blue-600" />
-        </div>
-      </div>
-      <h3 className="mt-4 text-lg font-semibold">
-        Running <span className="text-blue-600">Job Match Analysis</span>
-      </h3>
-      <p className="text-slate-600 mt-1">
-        This may take a short while. The page will refresh automatically.
-      </p>
-      <div className="mt-4">
-        <AutoRefresher intervalMs={3000} />
-      </div>
-    </div>
-  );
-}
-
-function ResultSummary({
-  result,
-  when,
-}: {
-  result: JobMatchResult;
-  when: string;
-}) {
-  const score =
-    typeof result?.overallScore === "number"
-      ? Math.max(0, Math.min(100, result.overallScore))
-      : null;
-
-  return (
-    <div className="space-y-3">
-      <div className="flex items-center gap-3">
-        {score !== null && (
-          <div className="relative h-14 w-14">
-            <div
-              className="h-14 w-14 rounded-full"
-              style={{
-                background: `conic-gradient(#2563eb ${
-                  score * 3.6
-                }deg, #e5e7eb 0deg)`,
-              }}
-            />
-            <div className="absolute inset-2 rounded-full bg-white flex items-center justify-center">
-              <div className="text-sm font-semibold">{score}</div>
-            </div>
-          </div>
-        )}
-        <div className="text-sm text-slate-600">
-          Generated at {formatDate(when)}
-        </div>
-      </div>
-
-      {result?.summary && (
-        <div className="rounded-lg border bg-slate-50/60 p-4">
-          <div className="text-sm font-semibold mb-1">Summary</div>
-          <p className="text-slate-700">{result.summary}</p>
-        </div>
-      )}
-
-      {result?.actionableNextSteps?.length ? (
-        <div className="rounded-lg border bg-slate-50/60 p-4">
-          <div className="text-sm font-semibold mb-1">
-            Actionable Next Steps
-          </div>
-          <ul className="list-disc pl-5 text-slate-700">
-            {result.actionableNextSteps!.map((s, i) => (
-              <li key={i}>{s}</li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
-    </div>
-  );
-}
-
-function JobMatchHistory({ analyses }: { analyses: JobMatchAnalysis[] }) {
-  const items = (analyses ?? [])
-    .filter((a) => a.type?.toUpperCase() === "JOB_MATCH_ANALYSIS")
-    .sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
-
-  return (
-    <div className="bg-white shadow rounded-xl p-6">
-      <h2 className="text-lg font-semibold mb-4">History Matching</h2>
-      {!items.length ? (
-        <p className="text-gray-500 text-sm">
-          No history yet. Once you run a job match, it’ll appear here.
+    <div className="min-h-screen bg-[#f7f8fa]">
+      <header className="max-w-5xl mx-auto pt-10 pb-4 px-4">
+        <h1 className="text-3xl md:text-4xl font-bold text-[#162B60] tracking-tight mb-1">
+          Job Matcher
+        </h1>
+        <p className="text-gray-500 font-medium">
+          Analyze your resume and saved jobs with AI-driven job matching.
         </p>
-      ) : (
-        <div className="space-y-3">
-          {items.map((a) => (
-            <div
-              key={a.id}
-              className="flex items-center justify-between rounded-lg border p-4 bg-white">
-              <div className="min-w-0">
-                <div className="text-sm font-medium">
-                  {a.status === "COMPLETED" ? "Completed" : a.status}
-                </div>
-                <div className="text-xs text-slate-600">
-                  {formatDate(a.createdAt)} · Analysis ID: {a.id.slice(0, 6)}…
-                </div>
+      </header>
+      <main className="max-w-5xl mx-auto px-2 md:px-0 pb-16">
+        <section className="space-y-7">
+          {/* EVALUATE */}
+          <div className="rounded-2xl shadow bg-white p-6 md:p-8 mb-0">
+            <div className="flex items-center gap-2 mb-4">
+              <Sparkles className="w-6 h-6 text-[#162B60]" />
+              <h2 className="text-lg font-semibold tracking-tight text-[#162B60]">
+                Evaluate with Job Posting
+              </h2>
+            </div>
+            {waiting && <ModalLoader />}
+            {waiting
+              ? <WaitingPanel />
+              : <AnalyzeFormClient cvs={cvs} jobs={jobs} selectedCvId={selectedCvId} />
+            }
+          </div>
+          <br />
+
+          {/* LATEST MATCH RESULT */}
+          {!waiting && latestJobMatch?.status?.toUpperCase() === "COMPLETED" && (
+            <div className="rounded-2xl shadow bg-white p-6 md:p-8 mt-0">
+              <div className="flex items-center gap-2 mb-4">
+                <BarChart className="w-6 h-6 text-emerald-500" />
+                <h2 className="text-lg font-semibold tracking-tight text-[#162B60]">
+                  Latest Match Result
+                </h2>
               </div>
-              {typeof a.result?.overallScore === "number" && (
-                <div className="text-sm font-semibold">
-                  Score: {Math.round(a.result.overallScore)}
+              <ResultSummary
+                result={latestJobMatch.result as AnalysisResult}
+                when={latestJobMatch.createdAt}
+              />
+            </div>
+          )}
+
+          {/* GRID: Saved Jobs / Analysis History */}
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="rounded-2xl shadow bg-white p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <Briefcase className="w-6 h-6 text-[#162B60]" />
+                <h3 className="font-semibold text-[#162B60] text-lg tracking-tight">
+                  Saved Jobs
+                </h3>
+              </div>
+              {jobs.length ? (
+                <ul className="space-y-2">
+                  {jobs.map((job) => (
+                    <li
+                      key={job.id}
+                      className="flex items-center justify-between rounded-md hover:bg-[#f6f8fd] px-4 py-2 transition"
+                    >
+                      <div className="min-w-0">
+                        <span className="font-medium text-[#162B60]">
+                          {job.title}
+                        </span>
+                        {job.company && (
+                          <span className="text-gray-500">
+                            {" "}
+                            · {job.company}
+                          </span>
+                        )}
+                        <div className="text-xs text-gray-400 truncate">
+                          Saved {formatDate(job.createdAt)}
+                        </div>
+                      </div>
+                      <form
+                        action={async () => {
+                          "use server";
+                          await deleteJobAction(job.id, selectedCvId);
+                        }}
+                      >
+                        <DeleteJobButton
+                          jobId={job.id}
+                          currentCvId={selectedCvId}
+                        />
+                      </form>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <div className="text-[15px] text-gray-400 text-center py-10">
+                  No saved jobs yet.
                 </div>
               )}
             </div>
-          ))}
-        </div>
-      )}
+            <JobMatchHistory analyses={analyses} />
+          </div>
+        </section>
+      </main>
     </div>
   );
 }

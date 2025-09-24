@@ -2,11 +2,11 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-export async function LogoutHandler() {
+export const logoutHandler = async () => {
   const cookieStorage = await cookies();
-
+  
   // hapus cookies
-  cookieStorage.delete("token");
+  cookieStorage.set("token", "", { maxAge: 0, domain: "resumind.live" });
 
-  redirect("/");
-}
+  return redirect("/");
+};

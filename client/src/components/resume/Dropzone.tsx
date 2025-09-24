@@ -64,12 +64,12 @@ export default function UploadDropzone({
 
   const validate = useCallback(
     (f: File): string | null => {
-      if (!f) return "File tidak ditemukan";
+      if (!f) return "File not found";
       const sizeOK = f.size <= maxSizeMB * 1024 * 1024;
-      if (!sizeOK) return `Ukuran file melebihi ${maxSizeMB}MB`;
+      if (!sizeOK) return `File size exceeds limit ${maxSizeMB}MB`;
       const ext = f.name.split(".").pop()?.toLowerCase();
       if (ext && acceptExts.length && !acceptExts.includes(ext)) {
-        return `Tipe file .${ext} tidak didukung`;
+        return `File type .${ext} not supported`;
       }
       return null;
     },
@@ -125,7 +125,7 @@ export default function UploadDropzone({
   const handleSubmit = async () => {
     const chosen = file ?? inputRef.current?.files?.[0] ?? null;
     if (!chosen) {
-      setMessage("Pilih atau drop file dulu ya ✨");
+      setMessage("Please select or drop a file first ✨");
       inputRef.current?.focus();
       return;
     }
@@ -144,7 +144,7 @@ export default function UploadDropzone({
         const res = await action(fd);
         if (res && typeof res === "object" && "ok" in res) {
           if (res.ok) {
-            toast.success("upload success");
+            toast.success("Upload Success");
             clear();
             router.refresh();
           } else {
@@ -154,7 +154,7 @@ export default function UploadDropzone({
         }
       } catch (e: unknown) {
         if (isNextRedirectError(e)) return;
-        const msg = getErrorMessage(e) || "Terjadi kesalahan saat upload";
+        const msg = getErrorMessage(e) || "An error occurred during upload";
         toast.error(msg);
       }
     });
@@ -180,7 +180,7 @@ export default function UploadDropzone({
           .filter(Boolean)
           .join(" ")}
         aria-busy={isPending}
-        aria-label="Dropzone unggah file">
+        aria-label="File upload dropzone">
         <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl">
           <div className="absolute -inset-x-20 -top-1/2 h-full rotate-12 bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
         </div>
@@ -212,10 +212,10 @@ export default function UploadDropzone({
                 />
               </svg>
               <div className="text-base sm:text-lg font-medium">
-                Tarik & letakkan file di sini
+                Drag & drop files here
               </div>
               <div className="text-xs sm:text-sm text-slate-500">
-                atau klik untuk memilih (maks {maxSizeMB}MB)
+                or click to select (max {maxSizeMB}MB)
               </div>
             </div>
           ) : (
@@ -245,7 +245,7 @@ export default function UploadDropzone({
                   title={file.name}>
                   {file.name}
                 </p>
-                <p className="text-xs text-slate-500">Dokumen terpilih</p>
+                <p className="text-xs text-slate-500">Selected document</p>
               </div>
 
               {/* Tombol hapus */}
@@ -256,7 +256,7 @@ export default function UploadDropzone({
                   clear();
                 }}
                 className="rounded-full p-1 text-slate-500 hover:bg-slate-100"
-                aria-label="Hapus file terpilih">
+                aria-label="Remove selected file">
                 ×
               </button>
             </div>
@@ -279,7 +279,7 @@ export default function UploadDropzone({
                 openPicker();
               }}
               className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium hover:bg-slate-50">
-              Pilih File
+              Choose File
             </button>
             <button
               type="button"
