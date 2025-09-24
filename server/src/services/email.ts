@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
 
 class EmailService {
   async sendVerification(to: string, name: string, token: string) {
-    const verificationUrl = `http://localhost:${env.port}/api/auth/verify/${token}`; //Change this later in production, frontend URL later on
+    const verificationUrl = `${env.frontendUrl}/api/auth/verify/${token}`; //Change this later in production, frontend URL later on
 
     const mailOptions = {
       from: '"Resumind Team" <noreply.resumind@gmail.com>',
