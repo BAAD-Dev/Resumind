@@ -25,6 +25,7 @@ class AuthController {
         secure: process.env.NODE_ENV === "production",
         sameSite: "lax",
         path: "/",
+        domain: process.env.NODE_ENV === "production" ? ".resumind.live" : undefined,
       });
 
       res.json({ token });
