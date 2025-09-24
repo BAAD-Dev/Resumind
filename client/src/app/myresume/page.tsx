@@ -4,6 +4,7 @@ import PremiumModal from "@/components/myResume/Notification";
 import { FileText, BarChart, Upload } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+export const dynamic = "force-dynamic";
 
 export default function Features() {
   const router = useRouter();
