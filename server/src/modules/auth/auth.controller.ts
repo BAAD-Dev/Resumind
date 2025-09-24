@@ -53,9 +53,6 @@ class AuthController {
       if (!token)
         throw new Error("Unique token not found", { cause: { status: 400 } });
       const result = await AuthService.verifyUserEmail(token);
-
-      // In a real app, you would redirect to your frontend's login page
-      // For now, we'll send a success message.
       return res.redirect(`${env.frontendUrl}/login?verified=true`);
     } catch (err) {
       next(err);
