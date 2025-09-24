@@ -254,7 +254,7 @@ export default function AnalyzePage({ user }: Props) {
 
           <div className="mb-4 flex flex-col items-center justify-center">
             <Image
-              src="/new.png"
+              src="/logo_new.png"
               alt="resumind_logo"
               width={150}
               height={30}
