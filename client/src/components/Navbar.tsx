@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { LogoutHandler } from "./logout";
+import { logoutHandler } from "./logout";
 
 type NavbarProps = {
   isLoggedIn: boolean;
@@ -77,7 +77,7 @@ export default function Navbar({ isLoggedIn, userName, role }: NavbarProps) {
                     Hi, {userName}
                   </span>
                 )}
-                <form action={LogoutHandler}>
+                <form action={logoutHandler}>
                   <button
                     type="submit"
                     className="cursor-pointer p-2 rounded-full hover:bg-gray-100 transition"
@@ -183,7 +183,7 @@ export default function Navbar({ isLoggedIn, userName, role }: NavbarProps) {
                 <button
                   onClick={async () => {
                     setIsOpen(false);
-                    await LogoutHandler();
+                    await logoutHandler();
                   }}
                   type="submit"
                   className="w-full text-left py-2 px-3 rounded cursor-pointer hover:bg-gray-100 transition"
