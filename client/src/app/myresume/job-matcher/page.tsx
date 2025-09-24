@@ -117,7 +117,10 @@ export default async function JobMatcherPage({
                           {job.title}
                         </span>
                         {job.company && (
-                          <span className="text-gray-500"> · {job.company}</span>
+                          <span className="text-gray-500">
+                            {" "}
+                            · {job.company}
+                          </span>
                         )}
                         <div className="text-xs text-gray-400 truncate">
                           Saved {formatDate(job.createdAt)}
@@ -129,7 +132,10 @@ export default async function JobMatcherPage({
                           await deleteJobAction(job.id, selectedCvId);
                         }}
                       >
-                        <DeleteJobButton jobId={job.id} currentCvId={selectedCvId} />
+                        <DeleteJobButton
+                          jobId={job.id}
+                          currentCvId={selectedCvId}
+                        />
                       </form>
                     </li>
                   ))}
