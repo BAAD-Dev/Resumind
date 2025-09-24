@@ -65,12 +65,12 @@ export async function getAnalysesByCvId(cvId: string): Promise<CvAnalysis[]> {
 export function pickBestAnalysis(list: CvAnalysis[]): CvAnalysis | null {
   if (!list?.length) return null;
 
-  // urutkan terbaru
-  const sorted = [...list].sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  );
-
-  // prioritas COMPLETED terbaru
-  const done = sorted.find((a) => a.status?.toUpperCase() === "COMPLETED");
-  return done ?? sorted[0];
+    // urutkan terbaru
+    const sorted = [...list].sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+    
+    // prioritas COMPLETED terbaru
+    const done = sorted.find(a => a.type?.toUpperCase() === "CV_ANALYSIS");
+    return done ?? sorted[0];
 }

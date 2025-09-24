@@ -23,8 +23,9 @@ class AuthController {
       res.cookie("token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
+        sameSite: "lax",
         path: "/",
+        domain: process.env.NODE_ENV === "production" ? "resumind.live" : undefined,
       });
 
       res.json({ token });
@@ -53,9 +54,6 @@ class AuthController {
       if (!token)
         throw new Error("Unique token not found", { cause: { status: 400 } });
       const result = await AuthService.verifyUserEmail(token);
-
-      // In a real app, you would redirect to your frontend's login page
-      // For now, we'll send a success message.
       return res.redirect(`${env.frontendUrl}/login?verified=true`);
     } catch (err) {
       next(err);

@@ -39,15 +39,15 @@ export default function AnalyzeFormClient({
 
   return (
     <form onSubmit={onSubmit} className="space-y-4">
-      {/* Select CV */}
+      {/* Select file */}
       <div>
-        <label className="block text-sm font-medium mb-1">Select CV</label>
+        <label className="block text-sm font-medium mb-1">Select file</label>
         <select
           name="cvId"
           defaultValue={selectedCvId}
           className="w-full border rounded-md p-2"
           required>
-          {!selectedCvId && <option value="">— Choose your CV —</option>}
+          {!selectedCvId && <option value="">— Choose your file —</option>}
           {cvs.map((cv) => (
             <option key={cv.id} value={cv.id}>
               {cv.originalName} · {formatDate(cv.createdAt)}

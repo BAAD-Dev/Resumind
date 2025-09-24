@@ -28,9 +28,9 @@ export default async function Page({
     }
     return (
       <div className="mx-auto max-w-xl rounded-xl border bg-white p-8 text-center">
-        <h2 className="text-xl font-semibold">Menjalankan analisis…</h2>
+        <h2 className="text-xl font-semibold">Running...</h2>
         <p className="text-slate-600 mt-2">
-          Ini bisa memakan beberapa detik. Halaman akan menyegarkan otomatis.
+          Please wait a moment. This page will refresh automatically when results are ready.
         </p>
         <AutoRefresher intervalMs={3000} />
       </div>
@@ -44,10 +44,10 @@ export default async function Page({
       <EmptyState
         title={
           analysis.status?.toUpperCase() === "PENDING"
-            ? "Analisis sedang diproses"
-            : "Analisis belum siap"
+            ? "Analysis in progress"
+            : "Analysis not ready yet"
         }
-        desc="Silakan tunggu beberapa saat lalu refresh halaman."
+        desc="Please wait a moment then refresh the page."
       />
     );
   }

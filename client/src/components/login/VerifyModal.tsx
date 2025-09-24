@@ -23,15 +23,14 @@ export function VerifyModal({
         <div className="flex items-start gap-3">
           <CheckCircle2 className="mt-1 h-6 w-6 text-green-600" />
           <div>
-            <h2 className="text-lg font-semibold">Email terverifikasi</h2>
+            <h2 className="text-lg font-semibold">Email verified</h2>
             <p className="mt-1 text-sm text-gray-600">
-              Akunmu sudah berhasil diverifikasi. Silakan login untuk
-              melanjutkan.
+              Your account has been successfully verified. Please log in to continue.
             </p>
           </div>
           <button
             onClick={onClose}
-            aria-label="Tutup"
+            aria-label="Close"
             className="ml-auto rounded-md p-1 hover:bg-gray-100"
           >
             <X className="h-5 w-5" />
