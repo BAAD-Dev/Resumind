@@ -166,7 +166,7 @@ export async function deleteJobAction(jobId: string, currentCvId?: string) {
 
   redirect(
     currentCvId
-      ? `/job-matcher?cv=${encodeURIComponent(currentCvId)}`
-      : "/job-matcher"
+      ? `/myresume/job-matcher?cv=${encodeURIComponent(currentCvId)}`
+      : "/myresume/job-matcher"
   );
 }

@@ -21,10 +21,10 @@ export default function Error({
         <div className="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between">
           <div>
             <h1 className="text-xl sm:text-2xl font-semibold tracking-tight">
-              MyResume / Resume
+              Resume
             </h1>
             <p className="text-sm text-slate-500">
-              Gagal memuat data CV — coba lagi sebentar ya
+              Failed to load Resume data — please try again later.
             </p>
           </div>
         </div>

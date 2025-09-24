@@ -19,7 +19,7 @@ export function Header({ overall }: { overall: number }) {
         </div>
         <div>
           <h1 className="text-2xl font-semibold">Overall Score</h1>
-          <p className="text-slate-600">CV Analysis</p>
+          <p className="text-slate-600">Resume or CV Analysis</p>
         </div>
       </div>
       <div className="flex gap-2">
