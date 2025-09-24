@@ -2,11 +2,13 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-export async function LogoutHandler() {
-  const cookieStorage = await cookies();
-
+export const logoutHandler = async () => {
+  // const cookieStorage = await cookies();
+  // cookieStorage.set("token", "")
   // hapus cookies
-  cookieStorage.delete("token");
+  // cookieStorage.clear();
+
+  (await cookies()).delete("token");
 
   return redirect("/");
-}
+};
