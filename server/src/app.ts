@@ -8,7 +8,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: [env.frontendUrl,"http://localhost:3000","http://localhost:3001"],
+    origin: [env.frontendUrl,"http://localhost:3000","http://localhost:3001","*"],
     credentials: true,
   })
 );
