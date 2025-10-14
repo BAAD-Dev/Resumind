@@ -128,7 +128,6 @@ export default function AnalyzePage({ user }: Props) {
     accept: { "application/pdf": [".pdf"] },
     multiple: false,
     maxFiles: 1,
-    noClick: true,
     noKeyboard: true,
   });
 
