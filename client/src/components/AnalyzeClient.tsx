@@ -241,36 +241,40 @@ export default function AnalyzeClient({ user }: Props) {
           </ul>
         </div>
 
-        <div
-          {...getRootProps()}
-          className={`border-2 border-dashed rounded-lg p-8 text-center transition-all duration-200 cursor-pointer ${
-            isDragActive
-              ? "border-blue-600 bg-blue-50"
-              : "border-gray-300 hover:border-blue-500 hover:bg-gray-50"
-          }`}
-        >
-          <input {...getInputProps()} />
-          <div className="flex flex-col items-center">
-            <div
-              className="p-3 bg-gray-100 rounded-full mb-4"
-              style={{ border: `1px solid ${PRIMARY_BLUE}` }}
-            >
-              <ArrowUpTrayIcon
-                className="h-8 w-8"
-                style={{ color: PRIMARY_BLUE }}
-              />
+        {/* --- Conditionally Rendered Dropzone --- */}
+        {!file && (
+          <div
+            {...getRootProps()}
+            className={`border-2 border-dashed rounded-lg p-8 text-center transition-all duration-200 cursor-pointer ${
+              isDragActive
+                ? "border-blue-600 bg-blue-50"
+                : "border-gray-300 hover:border-blue-500 hover:bg-gray-50"
+            }`}
+          >
+            <input {...getInputProps()} />
+            <div className="flex flex-col items-center">
+              <div
+                className="p-3 bg-gray-100 rounded-full mb-4"
+                style={{ border: `1px solid ${PRIMARY_BLUE}` }}
+              >
+                <ArrowUpTrayIcon
+                  className="h-8 w-8"
+                  style={{ color: PRIMARY_BLUE }}
+                />
+              </div>
+              <p className="text-gray-700 font-medium">
+                {isDragActive
+                  ? "Drop the file here..."
+                  : "Drag & drop your PDF or click to select"}
+              </p>
+              <p className="text-xs text-gray-500 mt-2">
+                PDF only • Max {MAX_FILE_SIZE_MB}MB
+              </p>
             </div>
-            <p className="text-gray-700 font-medium">
-              {isDragActive
-                ? "Drop the file here..."
-                : "Drag & drop your PDF or click to select"}
-            </p>
-            <p className="text-xs text-gray-500 mt-2">
-              PDF only • Max {MAX_FILE_SIZE_MB}MB
-            </p>
           </div>
-        </div>
+        )}
 
+        {/* --- Uploaded File Box --- */}
         {file && (
           <div className="mt-6">
             <div
@@ -303,7 +307,6 @@ export default function AnalyzeClient({ user }: Props) {
           </div>
         )}
 
-        {/* --- BUTTONS RESTORED --- */}
         <div className="mt-8 flex flex-col gap-4 w-full">
           <button
             onClick={handleAnalyze}
@@ -331,7 +334,6 @@ export default function AnalyzeClient({ user }: Props) {
         </div>
       </div>
 
-      {/* --- MODAL RESTORED --- */}
       {showDisclaimer && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div
